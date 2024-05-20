@@ -6,4 +6,6 @@
         'user' => 'root',
         'pass' => ''
     ];
+
+    $key = 'PASSWORD_TEST';
 ?>
