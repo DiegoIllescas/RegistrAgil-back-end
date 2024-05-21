@@ -7,5 +7,5 @@
         'pass' => ''
     ];
 
-    $key = 'PASSWORD_TEST';
+    $keypass = '7z0AKw8Hxhys3RVRN7KQsoFc';
 ?>

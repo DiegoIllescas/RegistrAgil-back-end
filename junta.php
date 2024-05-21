@@ -15,7 +15,7 @@
 
     //Lectura de los headers de la peticion
     $headers = apache_request_headers();
-    $isAuth = isAuth($headers);
+    $isAuth = isAuth($headers, $keypass);
     
     //Error si el Token de Sesion expiro
     if($isAuth == 308) {
