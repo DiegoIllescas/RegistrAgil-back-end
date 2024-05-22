@@ -18,11 +18,12 @@ Tener instalado `composer`, si no lo tienes instalado accede al link:
 
 2. Migrar la base de datos dentro de la carpeta `sql` de este repositorio, el `baseFormat.sql` es una propuesta organizada y reducida de la base de datos `baseregistragil.sql`. 
 
-Para migrar la base de datos: Con el servidor Apache y mySQL corriendo entrar a `https://localhost/phpmyadmin/index.php` y seleccionar la opcion [Importar], seleccionar la base que se desea usar (No se sobreescriber si importas las 2).
+Para migrar la base de datos: Con el servidor Apache y mySQL corriendo entrar a `https://localhost/phpmyadmin/index.php` y seleccionar la opcion [Importar], seleccionar la base que se desea usar (No se sobreescriben si importas las 2).
 
 Dentro de `config.php` especificar con que base de datos vas a utilizar.
 
 3. Desarrolla las funciones faltantes siguiendo la estructura:
+    
     Metodo POST para ALTAS
     Metodo DELTE para BAJAS
     Metodo PUT para CAMBIOS
