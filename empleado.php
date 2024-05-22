@@ -42,23 +42,4 @@
         exit();
     }
 
-    //Crear Junta
-    if($_SERVER['REQUEST_METHOD'] === 'POST') {
-        
-    }
-
-    //Consultar Juntas o Juntas
-    if($_SERVER['REQUEST_METHOD'] === 'GET') {
-        
-    }
-
-    //Eliminar(Cancelar) Junta
-    if($_SERVER['REQUEST_METHOD'] === 'DELETE') {
-        
-    }
-
-    //Editar Junta
-    if($_SERVER['REQUEST_METHOD'] === 'PUT') {
-        
-    }
 ?>

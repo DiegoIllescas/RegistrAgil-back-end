@@ -64,6 +64,7 @@ CREATE TABLE InvitadosPorJunta (
     entrada time,
     salida time,
     invitado_por int unsigned,
+    estado nvarchar(10) not null,
     foreign key (id_junta) references Junta(id_junta),
     foreign key (id_invitado) references Invitado(id_invitado),
     foreign key (id_automovil) references Automovil(id_automovil),
