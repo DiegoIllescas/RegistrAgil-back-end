@@ -22,19 +22,21 @@ Para migrar la base de datos: Con el servidor Apache y mySQL corriendo entrar a 
 
 Dentro de `config.php` especificar con que base de datos vas a utilizar.
 
-3. Desarrolla las funciones faltantes siguiendo la estructura:
+3. Dentro del directorio del repositorio ejecuta el comando `composer install`
+
+4. Desarrolla las funciones faltantes siguiendo la estructura:
     
     Metodo POST para ALTAS
 
     Metodo DELTE para BAJAS
 
     Metodo PUT para CAMBIOS
-    
+
     Metodo GET para CONSULTAS
 
     ej. `junta.php` tiene el formato base
 
-4. Para probar las funciones descargar POSTMAN(`https://www.postman.com/downloads/`) y seleccionar el Metodo y dentro de la opcion [raw] seleccionar JSON y formar los JSON necesarios.
+5. Para probar las funciones descargar POSTMAN(`https://www.postman.com/downloads/`) y seleccionar el Metodo y dentro de la opcion [raw] seleccionar JSON y formar los JSON necesarios.
 
 NOTA: Puedes comentar las validaciones de `isAuth()` para probar las funciones o mandar una peticion a `auth.php` con correo y clave como valores, si estas usando `baseFormat.sql` como base las cuentas de prueba estan definidos en el archivo `cuentas.json` si estas ocupando la otra, no me se las cuentas xd.    Te respondera un token ese token lo anadiras como header en post man de esta manera:
 
