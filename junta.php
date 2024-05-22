@@ -18,7 +18,7 @@
     $isAuth = isAuth($headers, $keypass);
     
     //Error si el Token de Sesion expiro
-    if($isAuth == 308) {
+    if($isAuth == 432) {
         header("HTTP/1.1 308 Session Expired");
         echo json_encode(['success' => false, 'error' => 'Sesion expirada']);
         exit();

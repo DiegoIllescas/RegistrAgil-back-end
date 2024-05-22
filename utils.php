@@ -33,13 +33,17 @@
         if (array_key_exists('Authorization', $headers)) {
             $token = getToken($headers['Authorization']);
             try {
-                $decodeToken = (array) JWT::decode($token, new Key($key, 'HS256'));
+                $payload = (array) JWT::decode($token, new Key($key, 'HS256'));
                 return 200;
             } catch (\Throwable $th) {
-                return 308;
+                return 432;
             }
         } else {
             return 401;
         }
+    }
+
+    function genToken($payload, $key) {
+        return JWT::encode($payload,$key, 'HS256');
     }
 ?>
