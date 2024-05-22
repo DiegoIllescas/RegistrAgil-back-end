@@ -28,21 +28,22 @@
         exit();
     }
 
-    $query = "SELECT correo, contraseña, permisos FROM usuario WHERE correo = ?";
+    $query = "SELECT correo, clave, permisos FROM Usuario WHERE correo = ?";
     $stmt = $dbConn->prepare($query);
     $stmt->bindParam(1, $data->correo);
     $stmt->execute();
 
     if($stmt->rowCount() > 0) {
         $res = $stmt->fetch();
-        if(password_verify($data->clave, $res->contraseña)) {
+        if(password_verify($data->clave, $res['clave'])) {
             $payload = [
-                'exp' => now() + 3600,
+                'exp' => time() + 3600,
                 'correo' => $data->correo,
+                'permisos' => $res['permisos']
             ];
             $token = genToken($payload, $keypass);
             header("HTTP/1.1 200 OK");
-            echo json_encode(['success' => true, 'permisos' => $res->permisos ,'content' => ['correo' => $data->correo, 'token' => $token]]);
+            echo json_encode(['success' => true, 'permisos' => $res['permisos'] ,'content' => ['correo' => $data->correo, 'token' => $token]]);
         }else{
             header("HTTP/1.1 412 Precondition Failed");
             echo json_encode(['success' => false, 'error' => 'Contraseña incorrecta']);
@@ -52,6 +53,5 @@
         echo json_encode(['success' => false, 'error' => 'Usuario no registrado']);
     }
 
-    $dbConn->close();
-
+    $dbConn = null;
 ?>

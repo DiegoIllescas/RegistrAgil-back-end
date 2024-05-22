@@ -23,7 +23,7 @@
     
     //Lectura de JSON
     $json = file_get_contents('php://input');
-    $data = json_decode($json, true);
+    $data = json_decode($json);
 
     //Error cuando no mandan un json bien formado
     if(!$data) {
@@ -61,4 +61,6 @@
     if($_SERVER['REQUEST_METHOD'] === 'PUT') {
         
     }
+
+    $dbConn = null;
 ?>

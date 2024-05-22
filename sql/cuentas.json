@@ -1,0 +1,26 @@
+{
+    "admin" : {
+        "correo" : "admin@test.com",
+        "password" : "admin1234"
+    },
+    
+    "anfitrion1" : {
+        "correo" : "anfitrion1@test.com",
+        "password" : "anfitrion1"
+    },
+
+    "anfitrion2" : {
+        "correo" : "anfitrion2@test.com",
+        "password" : "anfitrion2"
+    },
+
+    "recepcionista" : {
+        "correo" : "recep@test.com",
+        "password" : "recep1234"
+    },
+
+    "invitado" : {
+        "correo" : "invitado@test.com",
+        "password" : "invitado1234"
+    }
+}
