@@ -25,8 +25,11 @@ Dentro de `config.php` especificar con que base de datos vas a utilizar.
 3. Desarrolla las funciones faltantes siguiendo la estructura:
     
     Metodo POST para ALTAS
+
     Metodo DELTE para BAJAS
+
     Metodo PUT para CAMBIOS
+    
     Metodo GET para CONSULTAS
 
     ej. `junta.php` tiene el formato base
