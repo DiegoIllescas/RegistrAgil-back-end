@@ -4,6 +4,8 @@
 
     require 'vendor/autoload.php';
 
+    $payload;
+
     function connect($db) {
         try {
             $dsn = "mysql:host={$db['host']};dbname={$db['db']};charset=UTF8;port={$db['port']}";
@@ -34,12 +36,12 @@
             $token = getToken($headers['Authorization']);
             try {
                 $payload = (array) JWT::decode($token, new Key($key, 'HS256'));
-                return 200;
+                return ['status' => 200, 'payload' => $payload];
             } catch (\Throwable $th) {
-                return 432;
+                return ['status' => 432];
             }
         } else {
-            return 401;
+            return ['status' => 401];
         }
     }
 

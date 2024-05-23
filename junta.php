@@ -23,7 +23,7 @@
     
     //Lectura de JSON
     $json = file_get_contents('php://input');
-    $data = json_decode($json);
+    $data = json_decode($json, true);
 
     //Error cuando no mandan un json bien formado
     if(!$data) {
