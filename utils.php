@@ -2,6 +2,10 @@
     use Firebase\JWT\JWT;
     use Firebase\JWT\Key;
 
+    use PHPMailer\PHPMailer\PHPMailer;
+    use PHPMailer\PHPMailer\SMTP;
+    use PHPMailer\PHPMailer\Exception;
+
     require 'vendor/autoload.php';
 
     $payload;
@@ -47,5 +51,28 @@
 
     function genToken($payload, $key) {
         return JWT::encode($payload,$key, 'HS256');
+    }
+
+    function sendPassword($email, $clave) {
+        $mail = new PHPMailer(true);
+        try {
+            $mail->isSMTP();
+            $mail->Host         = 'smtp.gmail.com';
+            $mail->SMTPAuth     = true;
+            $mail->Username     = 'softwarelegends65@gmail.com';
+            $mail->Password     = 'prhj hhpo rnvs xrqj';
+            $mail->SMTPSecure   = PHPMailer::ENCRYPTION_SMTPS;
+            $mail->Port         = 465;
+
+            $mail->addAddress($email);
+
+            $mail->isHTML(true);
+            $mail->Subject      = 'Has sido registrado en RegistrAgil por uno de los Administradores';
+            $mail->Body         = 'Tu cuenta es '.$email." y tu clave es ".$clave;
+
+            $mail->send();
+        }catch(Exception $e) {
+            
+        }
     }
 ?>

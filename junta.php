@@ -8,14 +8,14 @@
     $isAuth = isAuth($headers, $keypass);
     
     //Error si el Token de Sesion expiro
-    if($isAuth == 432) {
+    if($isAuth['status'] == 432) {
         header("HTTP/1.1 308 Session Expired");
         echo json_encode(['success' => false, 'error' => 'Sesion expirada']);
         exit();
     }
 
     //Error si no incluye el Token de Autenticacion
-    if($isAuth == 401) {
+    if($isAuth['status'] == 401) {
         header("HTTP/1.1 401 Unauthorized");
         echo json_encode(['success' => false, 'error' => 'No estas logueado']);
         exit();
@@ -24,6 +24,9 @@
     //Lectura de JSON
     $json = file_get_contents('php://input');
     $data = json_decode($json, true);
+
+    //Obtener datos del token de autenticacion.
+    $userData = $isAuth['payload'];
 
     //Error cuando no mandan un json bien formado
     if(!$data) {
@@ -44,7 +47,19 @@
 
     //Crear Junta
     if($_SERVER['REQUEST_METHOD'] === 'POST') {
-        
+        //Revisar permisos de creacion de Junta (Unicamente Admin y Anfitrion)
+        if($userData['permisos'] === 1 || $userData['permisos'] === 4) {
+            //Comprobar los atributos obligatorios
+            if(isset($data['asunto'], $data['sala'], $data['fecha'], $data['hora_inicio'], $data['hora_fin'], $data['descripcion'], $data['direccion'], $data['invitados'])) {
+                echo " traes los atributos correctos";
+            }else{
+                header("HTTP/1.1 400 Bad Request");
+                echo json_encode(['success' => false, 'error' => 'Faltan atributos']);
+            }
+        }else{
+            header("HTTP/1.1 401 Unauthorized");
+            echo json_encode(['success' => false, 'error' => 'No estas autorizado para estas acciones']);
+        }
     }
 
     //Consultar Juntas o Juntas

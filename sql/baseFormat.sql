@@ -53,6 +53,7 @@ CREATE TABLE Junta (
     hora_inicio time not null,
     hora_fin time not null,
     descripcion text not null,
+    direccion text not null,
     foreign key (id_anfitrion) references Empleado(id_empleado)
 );
 

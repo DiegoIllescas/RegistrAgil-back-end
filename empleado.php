@@ -100,6 +100,7 @@
                 $stmt->execute();
 
                 /* Mandar correo al Empleado con su clave para entrar al sistema */
+                sendPassword($data['correo'], $newPassword);
 
                 echo json_encode(['success' => true]);
                 
