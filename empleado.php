@@ -100,10 +100,20 @@
                 $stmt->execute();
 
                 /* Mandar correo al Empleado con su clave para entrar al sistema */
-                sendPassword($data['correo'], $newPassword);
+                if(!sendPassword($data['correo'], $newPassword)){
+                    //No pudo mandar el correo al empleado
 
-                echo json_encode(['success' => true]);
-                
+                    //Si se implementa modo transaccional simplemente iria un rollback
+                    $query = "DELETE FROM Usuario WHERE id_usuario = ?";
+                    $stmt = $dbConn->prepare($query);
+                    $stmt->bindParam(1, $newId);
+                    $stmt->execute();
+
+                    header("HTTP/1.1 503 Service Unavailable");
+                    echo json_encode(['success' => false, 'error' => 'No se pudo mandar el correo al empleado']);
+                }else{
+                    echo json_encode(['success' => true, 'message' => 'Cuenta creada con exito']);
+                }                
             }else{
                 //Ya existe una cuenta con ese correo
                 header("HTTP/1.1 412 Precondition Failed");
