@@ -68,11 +68,12 @@
 
             $mail->isHTML(true);
             $mail->Subject      = 'Has sido registrado en RegistrAgil por uno de los Administradores';
-            $mail->Body         = 'Tu cuenta es '.$email." y tu clave es ".$clave;
+            $mail->Body         = "Ha sido registrado en el sistema con las siguientes credenciales: \nCorreo: $email\nClave: $clave";
 
             $mail->send();
+            return true;
         }catch(Exception $e) {
-            
+            return false;
         }
     }
 ?>
