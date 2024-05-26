@@ -150,7 +150,38 @@
 
     //Dar de baja Empleado
     if($_SERVER['REQUEST_METHOD'] === 'DELETE') {
-        
+        //Validar que el json tenga el correo del empleado a eliminar
+        if(isset($data['correo'])) {
+            //validar que el usuario exista
+            $query = "SELECT * FROM Usuario WHERE correo = ?";
+            $stmt = $dbConn->prepare($query);
+            $stmt->bindParam(1, $data['correo']);
+            $stmt->execute();
+
+            if($stmt->rowCount() > 0) {
+                //validar que sea un empleado
+                $res = $stmt->fetch();
+                if($res['permisos'] === 4 || $res['permisos'] === 3) {
+                    //Hard DELETE del Empleado
+                    $query = "DELETE FROM Usuario WHERE correo = ?";
+                    $stmt = $dbConn->prepare($query);
+                    $stmt->bindParam(1, $data['correo']);
+                    if($stmt->execute()){
+                        echo json_encode(['success' => true]);
+                    }else{
+                        echo json_encode(['success' => false, 'error' => 'No se pudo eliminar al empleado']);
+                    }
+                }else{
+                    echo json_encode(['success' => false, 'error' => 'El usuario no es un empleado']);
+                }
+            }else{
+                echo json_encode(['success' => false, 'error' => 'No existe empleado con ese correo']);
+            }
+            $stmt = null;
+        }else{
+            header("HTTP/1.1 400 Bad Request");
+            echo json_encode(['success' => false, 'error' => 'Falta atributo correo']);
+        }
     }
 
     //Actualizar datos del Empleado
