@@ -32,5 +32,15 @@
         exit();
     }
 
+    //Obtener datos de usuario "Ver Perfil"
+    if($_SERVER['REQUEST_METHOD'] === 'GET') {
+
+    }
+
+    //cambiar contrasna o foto
+    if($_SERVER['REQUEST_METHOD' === 'PATCH']) {
+
+    }
+
 
 ?>
