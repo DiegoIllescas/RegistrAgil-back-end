@@ -63,9 +63,9 @@
 
             if($stmt->rowCount() === 0) {
                 //Obtenemos el valor de la Empresa que lo hereda del admin
-                $query = "SELECT empresa FROM Usuario WHERE correo = ?";
+                $query = "SELECT empresa FROM Usuario WHERE id_usuario = ?";
                 $stmt = $dbConn->prepare($query);
-                $stmt->bindParam(1, $adminData['correo']);
+                $stmt->bindParam(1, $adminData['id_usuario']);
                 $stmt->execute();
 
                 $res = $stmt->fetch();

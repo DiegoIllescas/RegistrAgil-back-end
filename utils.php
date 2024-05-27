@@ -76,4 +76,28 @@
             return false;
         }
     }
+
+    function sendInvitation($id_junta, $correo, $maxAcom, $asunto) {
+        $mail = new PHPMailer(true);
+        try {
+            $mail->isSMTP();
+            $mail->Host         = 'smtp.gmail.com';
+            $mail->SMTPAuth     = true;
+            $mail->Username     = 'softwarelegends65@gmail.com';
+            $mail->Password     = 'prhj hhpo rnvs xrqj';
+            $mail->SMTPSecure   = PHPMailer::ENCRYPTION_SMTPS;
+            $mail->Port         = 465;
+
+            $mail->addAddress($correo);
+
+            $mail->isHTML(true);
+            $mail->Subject      = $asunto;
+            $mail->Body         = "Ha sido invitado a la junta.... \n Abre el siguiente link para confirmar tu asistencia:\n http://localhost:5173/Inicio?id_junta=$id_junta";
+
+            $mail->send();
+            return true;
+        }catch(Exception $e) {
+            return false;
+        }
+    }
 ?>

@@ -51,7 +51,75 @@
         if($userData['permisos'] === 1 || $userData['permisos'] === 4) {
             //Comprobar los atributos obligatorios
             if(isset($data['asunto'], $data['sala'], $data['fecha'], $data['hora_inicio'], $data['hora_fin'], $data['descripcion'], $data['direccion'], $data['invitados'])) {
-                echo " traes los atributos correctos";
+                
+                //Obtener id del anfitrion
+                $query = "SELECT id_empleado FROM Empleado WHERE id_usuario = ? AND departamento != 'Recepcion'";
+                $stmt = $dbConn->prepare($query);
+                $stmt->bindParam(1, $userData['id_usuario']);
+                $stmt->execute();
+
+                $res = $stmt->fetch();
+
+                //Damos de alta la junta
+                $query = "INSERT INTO Junta (id_anfitrion, asunto, sala, fecha, hora_inicio, hora_fin, descripcion, direccion) VALUE (?, ?, ?, ?, ?, ?, ?, ?)";
+                $stmt = $dbConn->prepare($query);
+                $stmt->bindValue(1, $res['id_empleado']);
+                $stmt->bindValue(2, $data['asunto']);
+                $stmt->bindValue(3, $data['sala']);
+                $stmt->bindValue(4, date('Y-m-d', strtotime($data['fecha'])));
+                $stmt->bindValue(5, $data['hora_inicio']);
+                $stmt->bindValue(6, $data['hora_fin']);
+                $stmt->bindValue(7, $data['descripcion']);
+                $stmt->bindValue(8, $data['direccion']);
+                if($stmt->execute()) {
+                    $id_junta = $dbConn->lastInsertId();
+                    //Si pudo registrar la junta
+                    foreach($data['invitados'] as $invitado) {
+                        $query = "SELECT id_usuario FROM Usuario WHERE correo = ? AND permisos = 2";
+                        $stmt = $dbConn->prepare($query);
+                        $stmt->bindParam(1, $invitado['correo']);
+                        $stmt->execute();
+                        
+                        if($stmt->rowCount() == 0) {
+                            //No existe en el sistema
+
+                            $query = "INSERT INTO Usuario (correo) VALUE (?)";
+                            $stmt = $dbConn->prepare($query);
+                            $stmt->bindValue(1, $invitado['correo']);
+                            if($stmt->execute()) {
+                                $query = "INSERT INTO Invitado (id_usuario) VALUE (?)";
+                                $stmt = $dbConn->prepare($query);
+                                $stmt->bindValue(1, $dbConn->lastInsertId());
+                                $stmt->execute();
+                                $id_invitado = $dbConn->lastInsertId();
+                            }else{
+                                //Nose bro cuando ya existe el correo pero no es invitado, caso imposible para nuestro diseno
+                            }
+                        } else {
+                            //Existe en el sistema
+                            $res = $stmt->fetch();
+                            $query = "SELECT id_invitado FROM Invitado WHERE id_usuario = ?";
+                            $stmt = $dbConn->prepare($query);
+                            $stmt->bindParam(1, $res['id_usuario']);
+                            $stmt->execute();
+
+                            $res = $stmt->fetch();
+                            $id_invitado = $res['id_invitado'];
+                        }
+
+                        $query = "INSERT INTO InvitadosPorJunta (id_junta, id_invitado, estado) VALUE (?, ?, 'Pendiente')";
+                        $stmt = $dbConn->prepare($query);
+                        $stmt->bindValue(1, $id_junta);
+                        $stmt->bindValue(2, $id_invitado);
+                        $stmt->execute();
+
+                        sendInvitation($id_junta, $invitado['correo'], $invitado['maxAcom'], $data['asunto']);
+                    }
+                    echo json_encode(['success' => true]);
+                }else{
+                    echo json_encode(['success' => false, 'error' => 'No se pudo agendar la junta']);
+                }
+                $stmt = null;   
             }else{
                 header("HTTP/1.1 400 Bad Request");
                 echo json_encode(['success' => false, 'error' => 'Faltan atributos']);

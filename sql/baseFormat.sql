@@ -54,7 +54,8 @@ CREATE TABLE Junta (
     hora_fin time not null,
     descripcion text not null,
     direccion text not null,
-    foreign key (id_anfitrion) references Empleado(id_empleado) ON DELETE CASCADE
+    foreign key (id_anfitrion) references Empleado(id_empleado) ON DELETE CASCADE,
+    UNIQUE (sala, fecha, hora_inicio, hora_fin)
 );
 
 CREATE TABLE InvitadosPorJunta (
@@ -66,7 +67,7 @@ CREATE TABLE InvitadosPorJunta (
     salida time,
     invitado_por int unsigned,
     estado nvarchar(10) not null,
-    foreign key (id_junta) references Junta(id_junta), ON DELETE CASCADE
+    foreign key (id_junta) references Junta(id_junta) ON DELETE CASCADE,
     foreign key (id_invitado) references Invitado(id_invitado),
     foreign key (id_automovil) references Automovil(id_automovil),
     foreign key (invitado_por) references Invitado(id_invitado)

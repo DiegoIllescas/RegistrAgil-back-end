@@ -30,7 +30,7 @@
 
     //Login
     if($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $query = "SELECT correo, clave, permisos FROM Usuario WHERE correo = ?";
+        $query = "SELECT id_usuario, clave, permisos FROM Usuario WHERE correo = ?";
         $stmt = $dbConn->prepare($query);
         $stmt->bindParam(1, $data['correo']);
         $stmt->execute();
@@ -40,7 +40,7 @@
             if(password_verify($data['clave'], $res['clave'])) {
                 $payload = [
                     'exp' => time() + 3600,
-                    'correo' => $data['correo'],
+                    'id_usuario' => $res['id_usuario'],
                     'permisos' => $res['permisos']
                 ];
                 $token = genToken($payload, $keypass);
