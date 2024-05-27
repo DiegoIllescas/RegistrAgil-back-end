@@ -179,6 +179,7 @@
                     $stmt = $dbConn->prepare($query);
                     $stmt->bindParam(1, $data['correo']);
                     if($stmt->execute()){
+                        unlink("./img/".$res['id_usuario'].".jpg");
                         echo json_encode(['success' => true]);
                     }else{
                         echo json_encode(['success' => false, 'error' => 'No se pudo eliminar al empleado']);

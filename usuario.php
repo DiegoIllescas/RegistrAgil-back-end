@@ -34,13 +34,18 @@
 
     //Obtener datos de usuario "Ver Perfil"
     if($_SERVER['REQUEST_METHOD'] === 'GET') {
+        $query = "SELECT nombre, apellido_paterno, apellido_materno, correo FROM Usuario WHERE id_usuario = ?";
+        $stmt = $dbConn->prepare($query);
+        $stmt->bindParam(1, $userData['id_usuario']);
+        $stmt->execute();
 
+        echo json_encode(['success' => true, 'content' => $stmt->fetch()]);
+        $stmt = null;
     }
-
+    
     //cambiar contrasna o foto
-    if($_SERVER['REQUEST_METHOD' === 'PATCH']) {
+    if($_SERVER['REQUEST_METHOD'] === 'PATCH') {
 
     }
-
-
+    $dbConn = null;
 ?>
