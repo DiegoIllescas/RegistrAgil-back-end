@@ -1,8 +1,16 @@
 <?php
     include "config.php";
     include "utils.php";
+    header('Access-Control-Allow-Origin: *');
+    header("Access-Control-Allow-Headers: X-API-KEY, Origin,X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
     header("Content-Type: application/json; charset=utf-8");
+    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization');
+    header('Access-Control-Max-Age: 3600'); // 1 hour cache
 
+    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+        exit(0);
+    }
     //Lectura de los headers de la peticion
     $headers = apache_request_headers();
     $isAuth = isAuth($headers, $keypass);
@@ -120,6 +128,8 @@
                     $stmt = $dbConn->prepare($query);
                     $stmt->bindParam(1, $newId);
                     $stmt->execute();
+
+                    unlink($url);
 
                     header("HTTP/1.1 503 Service Unavailable");
                     echo json_encode(['success' => false, 'error' => 'No se pudo mandar el correo al empleado']);

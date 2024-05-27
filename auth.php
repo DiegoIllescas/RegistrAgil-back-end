@@ -1,7 +1,16 @@
 <?php
     include "config.php";
     include "utils.php";
+    header('Access-Control-Allow-Origin: *');
+    header("Access-Control-Allow-Headers: X-API-KEY, Origin,X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
     header("Content-Type: application/json; charset=utf-8");
+    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization');
+    header('Access-Control-Max-Age: 3600'); // 1 hour cache
+
+    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+        exit(0);
+    }
 
     $json = file_get_contents('php://input');
     $data = json_decode($json, true);
@@ -13,7 +22,13 @@
         exit();
     }
 
-    if(!isset($data['correo'], $data['clave'])) {
+    if(!isset($data['correo'], $data['password'])) {
+        header("HTTP/1.1 400 Bad Request");
+        echo json_encode(['success' => false, 'error' => 'Faltan parametros']);
+        exit();
+    }
+
+    if($data['correo'] == '' || $data['password'] == '') {
         header("HTTP/1.1 400 Bad Request");
         echo json_encode(['success' => false, 'error' => 'Faltan parametros']);
         exit();
@@ -37,7 +52,7 @@
 
         if($stmt->rowCount() > 0) {
             $res = $stmt->fetch();
-            if(password_verify($data['clave'], $res['clave'])) {
+            if(password_verify($data['password'], $res['clave'])) {
                 $payload = [
                     'exp' => time() + 3600,
                     'id_usuario' => $res['id_usuario'],
