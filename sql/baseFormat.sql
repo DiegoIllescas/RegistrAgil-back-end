@@ -80,15 +80,15 @@ CREATE TABLE DispositivosPorReunion (
     foreign key (id_dispositivo) references Dispositivos(id_dispositivo)
 );
 
-INSERT INTO Usuario (correo, nombre, apellido_paterno, apellido_materno, empresa, telefono, permisos, clave) VALUE ('admin@test.com','Juan','Gonzales','Lopez','Software Legends','5511223344',1,'$2y$10$fyqdXZvd9dPbB8aTwX5hF.4ksPrVBaoiF2HmulUUVg5L6XFG11TXW');
+INSERT INTO Usuario (correo, nombre, apellido_paterno, apellido_materno, empresa, fotografia, telefono, permisos, clave) VALUE ('admin@test.com','Juan','Gonzales','Lopez','Software Legends','./img/1.jpg','5511223344',1,'$2y$10$fyqdXZvd9dPbB8aTwX5hF.4ksPrVBaoiF2HmulUUVg5L6XFG11TXW');
 
-INSERT INTO Usuario (correo, nombre, apellido_paterno, apellido_materno, empresa, telefono, permisos, clave) VALUE ('anfitrion1@test.com','Emma','Miranda','Santiago','Software Legends','5522334455',4,'$2y$10$dUijuMHtrFNf8YUBgUM9luymboLJFGmdLnySYDXiysfiaxDsJDOwW');
+INSERT INTO Usuario (correo, nombre, apellido_paterno, apellido_materno, empresa, fotografia, telefono, permisos, clave) VALUE ('anfitrion1@test.com','Emma','Miranda','Santiago','Software Legends','./img/2.jpg','5522334455',4,'$2y$10$dUijuMHtrFNf8YUBgUM9luymboLJFGmdLnySYDXiysfiaxDsJDOwW');
 
-INSERT INTO Usuario (correo, nombre, apellido_paterno, apellido_materno, empresa, telefono, permisos, clave) VALUE ('anfitrion2@test.com','Ricardo','Spohn','Hernandez','Software Legends','5533445566',4,'$2y$10$i691/gs1QF7laI/zC66Mp.Z.0v9kzeodYvyF.5te1UE2Y7ggVhzrC');
+INSERT INTO Usuario (correo, nombre, apellido_paterno, apellido_materno, empresa, fotografia, telefono, permisos, clave) VALUE ('anfitrion2@test.com','Ricardo','Spohn','Hernandez','Software Legends','./img/3.jpg','5533445566',4,'$2y$10$i691/gs1QF7laI/zC66Mp.Z.0v9kzeodYvyF.5te1UE2Y7ggVhzrC');
 
-INSERT INTO Usuario (correo, nombre, apellido_paterno, apellido_materno, empresa, telefono, permisos, clave) VALUE ('recep@test.com','Mario','Ruiz','Garcia','Software Legends','5544556677',3,'$2y$10$OgsS5sBTued.ZP816rZLsezrWfMBB0KFvGK1THeWK9fRvOlfryORy');
+INSERT INTO Usuario (correo, nombre, apellido_paterno, apellido_materno, empresa, fotografia, telefono, permisos, clave) VALUE ('recep@test.com','Mario','Ruiz','Garcia','Software Legends','./img/4.jpg','5544556677',3,'$2y$10$OgsS5sBTued.ZP816rZLsezrWfMBB0KFvGK1THeWK9fRvOlfryORy');
 
-INSERT INTO Usuario (correo, nombre, apellido_paterno, apellido_materno, empresa, telefono, permisos, clave) VALUE ('invitado@test.com','Saul','Benitez','Rodriguez','Microsoft','5555667788',2,'$2y$10$sfLABNpHZUdtSc8QW/7aP.PrAw06IGDa3S6Oytd76iumYKiUEMrO.');
+INSERT INTO Usuario (correo, nombre, apellido_paterno, apellido_materno, empresa, fotografia, telefono, permisos, clave) VALUE ('invitado@test.com','Saul','Benitez','Rodriguez','Microsoft','./img/5.jpg','5555667788',2,'$2y$10$sfLABNpHZUdtSc8QW/7aP.PrAw06IGDa3S6Oytd76iumYKiUEMrO.');
 
 INSERT INTO Empleado (id_usuario, direccion, departamento) VALUE (2, 'Av. Juan de Dios Bátiz s/n esq. Av. Miguel Othón de Mendizabal. Colonia Lindavista. Alcaldia: Gustavo A. Madero. C. P. 07738. Ciudad de México.', 'Desarrollo Front-end');
 
