@@ -10,7 +10,7 @@ CREATE TABLE Usuario (
     apellido_paterno nvarchar(50),
     apellido_materno nvarchar(50),
     empresa nvarchar(45),
-    fotografia nvarchar(45),
+    fotografia nvarchar(100),
     telefono nvarchar(10),
     permisos int(11),
     clave nvarchar(60)

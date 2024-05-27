@@ -54,7 +54,7 @@
 
     //Dar de alta empleado
     if($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if(isset($data['correo'], $data['nombre'], $data['apellido_paterno'], $data['apellido_materno'], $data['telefono'], $data['direccion'], $data['permisos'])) {
+        if(isset($data['correo'], $data['nombre'], $data['apellido_paterno'], $data['apellido_materno'], $data['telefono'], $data['direccion'], $data['permisos'], $data['foto'])) {
             //Comprobamos que no exista el correo en el sistema
             $query = "SELECT * FROM Usuario WHERE correo = ?";
             $stmt = $dbConn->prepare($query);
@@ -88,6 +88,18 @@
 
                 //Insertamos ahora en Empleados
                 $newId = $dbConn->lastInsertId();
+
+                //Guardar imagen en el sistema de archivos
+                $img = base64_decode($data['foto']);
+                $url = "./img/".$newId.".jpg";
+                file_put_contents($url, $img);
+
+                $query = "UPDATE Usuario SET fotografia = :foto WHERE id_usuario = :id";
+                $stmt = $dbConn->prepare($query);
+                $stmt->bindValue(':foto', $url);
+                $stmt->bindParam(':id', $newId);
+                $stmt->execute();
+
                 $departamento = 'Recepcion';
                 if(isset($data['departamento']))
                     $departamento = $data['departamento'];
