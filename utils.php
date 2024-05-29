@@ -26,7 +26,7 @@
     }
 
     function newPassword() {
-        $bytes = openssl_random_pseudo_bytes(8);
+        $bytes = openssl_random_pseudo_bytes(4);
         return bin2hex($bytes);
     }
 
@@ -77,7 +77,31 @@
         }
     }
 
-    function sendInvitation($id_junta, $correo, $maxAcom, $asunto) {
+    function sendNewPassword($email, $clave) {
+        $mail = new PHPMailer(true);
+        try {
+            $mail->isSMTP();
+            $mail->Host         = 'smtp.gmail.com';
+            $mail->SMTPAuth     = true;
+            $mail->Username     = 'softwarelegends65@gmail.com';
+            $mail->Password     = 'prhj hhpo rnvs xrqj';
+            $mail->SMTPSecure   = PHPMailer::ENCRYPTION_SMTPS;
+            $mail->Port         = 465;
+
+            $mail->addAddress($email);
+
+            $mail->isHTML(true);
+            $mail->Subject      = 'Su clave para entrar al sistemaa ha sido cambiada por el Administrador';
+            $mail->Body         = "Su nueva clave es: $clave";
+
+            $mail->send();
+            return true;
+        }catch(Exception $e) {
+            return false;
+        }
+    }
+
+    function sendInvitation($id_junta, $correo, $maxAcom, $data, $keyword) {
         $mail = new PHPMailer(true);
         try {
             $mail->isSMTP();
@@ -90,9 +114,17 @@
 
             $mail->addAddress($correo);
 
+            $payload = [
+                'exp' => strtotime($data['fecha']) + 3600*12,
+                'idjunta' => $id_junta,
+                'maxAcom' => $maxAcom
+            ];
+
+            $token = genToken($payload, $keyword);
+
             $mail->isHTML(true);
-            $mail->Subject      = $asunto;
-            $mail->Body         = "Ha sido invitado a la junta.... \n Abre el siguiente link para confirmar tu asistencia:\n http://localhost:5173/Inicio?id_junta=$id_junta";
+            $mail->Subject      = $data['asunto'];
+            $mail->Body         = "<p>Has sido invitado por {$data['anfitrion']}</p><p>{$data['descripcion']}</p><p>La Junta es el dia {$data['fecha']} a las {$data['hora_inicio']}</p><p>...</p><p>Ingresa al siguiente link para confirmar tu asistencia:</p><p>http://localhost:5173/FormularioInvitado?token=$token</p>";
 
             $mail->send();
             return true;

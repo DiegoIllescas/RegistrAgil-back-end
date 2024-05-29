@@ -61,12 +61,14 @@
             if(isset($data['asunto'], $data['sala'], $data['fecha'], $data['hora_inicio'], $data['hora_fin'], $data['descripcion'], $data['direccion'], $data['invitados'])) {
                 
                 //Obtener id del anfitrion
-                $query = "SELECT id_empleado FROM Empleado WHERE id_usuario = ? AND departamento != 'Recepcion'";
+                $query = "SELECT Empleado.id_empleado, Usuario.nombre, Usuario.apellido_paterno, Usuario.apellido_materno FROM Empleado INNER JOIN Usuario ON Empleado.id_usuario = Usuario.id_usuario WHERE Empleado.id_usuario = ? AND departamento != 'Recepcion'";
                 $stmt = $dbConn->prepare($query);
                 $stmt->bindParam(1, $userData['id_usuario']);
                 $stmt->execute();
 
                 $res = $stmt->fetch();
+
+                $anfitrion = $res['nombre']." ".$res['apellido_paterno']." ".$res['apellido_materno'];
 
                 //Damos de alta la junta
                 $query = "INSERT INTO Junta (id_anfitrion, asunto, sala, fecha, hora_inicio, hora_fin, descripcion, direccion) VALUE (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -91,9 +93,10 @@
                         if($stmt->rowCount() == 0) {
                             //No existe en el sistema
 
-                            $query = "INSERT INTO Usuario (correo) VALUE (?)";
+                            $query = "INSERT INTO Usuario (correo, permisos) VALUE (?, ?)";
                             $stmt = $dbConn->prepare($query);
                             $stmt->bindValue(1, $invitado['correo']);
+                            $stmt->bindValue(2, 2);
                             if($stmt->execute()) {
                                 $query = "INSERT INTO Invitado (id_usuario) VALUE (?)";
                                 $stmt = $dbConn->prepare($query);
@@ -121,9 +124,22 @@
                         $stmt->bindValue(2, $id_invitado);
                         $stmt->execute();
 
-                        sendInvitation($id_junta, $invitado['correo'], $invitado['maxAcom'], $data['asunto']);
+                        $idQR = $dbConn->lastInsertId();
+
+                        $content = [
+                            "anfitrion" => $anfitrion, 
+                            "asunto" => $data['asunto'],
+                            "sala" => $data['sala'],
+                            "fecha" => $data['fecha'],
+                            "hora_inicio" => $data['hora_inicio'],
+                            "hora_fin" => $data['hora_fin'],
+                            "descripcion" => $data['descripcion'],
+                            "direccion" => $data['direccion']
+                        ];
+
+                        sendInvitation($idQR, $invitado['correo'], $invitado['acompañantes'], $content, $keypass);
                     }
-                    echo json_encode(['success' => true]);
+                    echo json_encode(['success' => true, 'idQR' => $idQR]);
                 }else{
                     echo json_encode(['success' => false, 'error' => 'No se pudo agendar la junta']);
                 }
@@ -138,7 +154,7 @@
         }
     }
 
-    //Consultar Juntas o Juntas
+    //Consultar Juntas
     if($_SERVER['REQUEST_METHOD'] === 'GET') {
         
     }

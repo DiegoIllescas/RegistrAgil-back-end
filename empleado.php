@@ -62,7 +62,7 @@
 
     //Dar de alta empleado
     if($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if(isset($data['correo'], $data['nombre'], $data['apellido_paterno'], $data['apellido_materno'], $data['telefono'], $data['direccion'], $data['permisos'], $data['foto'])) {
+        if(isset($data['correo'], $data['nombre'], $data['apellido_paterno'], $data['apellido_materno'], $data['telefono'], $data['direccion'], $data['permisos'], $data['fotografia'])) {
             //Comprobamos que no exista el correo en el sistema
             $query = "SELECT * FROM Usuario WHERE correo = ?";
             $stmt = $dbConn->prepare($query);
@@ -98,7 +98,7 @@
                 $newId = $dbConn->lastInsertId();
 
                 //Guardar imagen en el sistema de archivos
-                $img = base64_decode($data['foto']);
+                $img = base64_decode($data['fotografia']);
                 $url = "./img/".$newId.".jpg";
                 file_put_contents($url, $img);
 
@@ -142,31 +142,35 @@
                 echo json_encode(['success' => false, 'error' => 'Ya existe un usuario con esta cuenta']);
             }
             $stmt = null;
-        }else {
-            header("HTTP/1.1 400 Bad Request");
-            echo json_encode(['success' => false, 'error' => 'Faltan atributos']);
-        }
-    }
-
-    //Consultar Empleado
-    if($_SERVER['REQUEST_METHOD'] === 'GET') {
-        if(isset($data['correo'])) {
-            $query = "SELECT Usuario.nombre, Usuario.apellido_paterno, Usuario.apellido_materno, Usuario.correo, Usuario.telefono, Empleado.direccion, Empleado.departamento, Usuario.permisos FROM Empleado INNER JOIN Usuario ON Empleado.id_usuario = Usuario.id_usuario WHERE Usuario.correo = ?";
+        }else if(isset($data['correo'])) {
+            $query = "SELECT Usuario.nombre, Usuario.apellido_paterno, Usuario.apellido_materno, Usuario.correo, Usuario.telefono, Empleado.direccion, Empleado.departamento, Usuario.permisos, Usuario.fotografia FROM Empleado INNER JOIN Usuario ON Empleado.id_usuario = Usuario.id_usuario WHERE Usuario.correo = ?";
             $stmt = $dbConn->prepare($query);
             $stmt->bindParam(1, $data['correo']);
             $stmt->execute();
 
             if($stmt->rowCount() > 0) {
                 $res = $stmt->fetch();
+                $bin = file_get_contents($res['fotografia']);
+                $binEncoded = base64_encode($bin);
+
+                $res['fotografia'] = $binEncoded;
+                switch ($res['permisos']){
+                    case 3:
+                        $res['permisos'] = "Recepcionista";
+                        break;
+                    case 4:
+                        $res['permisos'] = "Anfitrión";
+                        break;
+                }
                 echo json_encode(['success' => true, 'content' => $res]);
             }else{
                 header("HTTP/1.1 412 Precondition Failed");
                 echo json_encode(['success' => false, 'error' => 'No existe un empleado asociado al correo ingresado']);
             }
             $stmt = null;
-        }else{
+        } else {
             header("HTTP/1.1 400 Bad Request");
-            echo json_encode(['success' => false, 'error' => 'Falta atributo correo']);
+            echo json_encode(['success' => false, 'error' => 'Faltan atributos']);
         }
     }
 
@@ -209,8 +213,36 @@
 
     //Actualizar datos del Empleado
     if($_SERVER['REQUEST_METHOD'] === 'PUT') {
-        if(isset($data['correo'])) {
-            $query = "UPDATE Usuario SET ";
+        if(isset($data['correo'], $data['telefono'], $data['departamento'], $data['permisos'])) {
+            $query = "UPDATE Usuario SET telefono = :telefono, permisos = :permisos WHERE correo = :correo";
+            $stmt = $dbConn->prepare($query);
+            $stmt->bindValue(':telefono', $data['telefono']);
+            $stmt->bindValue(':permisos', $data['permisos']);
+            $stmt->bindValue(':correo', $data['correo']);
+            $stmt->execute();
+
+            $stmt = $dbConn->prepare("SELECT id_usuario FROM Usuario WHERE correo = ?");
+            $stmt->bindParam(1, $data['correo']);
+            $stmt->execute();
+            
+            $res = $stmt->fetch();
+
+            $stmt = $dbConn->prepare("UPDATE Empleado SET departamento = :departamento WHERE id_usuario = :id_usuario");
+            $stmt->bindValue(':departamento', $data['departamento']);
+            $stmt->bindValue(':id_usuario', $res['id_usuario']);
+            $stmt->execute();
+
+            if($data['newPassword']) {
+                $newPassword = newPassword();
+                $stmt = $dbConn->prepare("UPDATE Usuario SET clave = :clave WHERE correo = :correo");
+                $stmt->bindValue(':clave', password_hash($newPassword, PASSWORD_DEFAULT));
+                $stmt->bindValue(':correo', $data['correo']);
+                $stmt->execute();
+                
+                sendNewPassword($data['correo'], $newPassword);
+            }
+            
+            echo json_encode(["success" => true]);
             /* Iterar cada parametro pasado para actualizarlo en la BD */
         }else{
             header("HTTP/1.1 400 Bad Request");
