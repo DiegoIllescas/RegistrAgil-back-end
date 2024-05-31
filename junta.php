@@ -82,6 +82,7 @@
                 $stmt->bindValue(7, $data['descripcion']);
                 $stmt->bindValue(8, $data['direccion']);
                 if($stmt->execute()) {
+                    $flag = true;
                     $id_junta = $dbConn->lastInsertId();
                     //Si pudo registrar la junta
                     foreach($data['invitados'] as $invitado) {
@@ -137,9 +138,9 @@
                             "direccion" => $data['direccion']
                         ];
 
-                        sendInvitation($idQR, $invitado['correo'], $invitado['acompañantes'], $content, $keypass);
+                        $flag = $flag && sendInvitation($idQR, $invitado['correo'], $invitado['acompañantes'], $content, $keypass);
                     }
-                    echo json_encode(['success' => true, 'idQR' => $idQR]);
+                    echo json_encode(['success' => true, 'id_reunion' => $idQR, 'flag' => $flag]);
                 }else{
                     echo json_encode(['success' => false, 'error' => 'No se pudo agendar la junta']);
                 }

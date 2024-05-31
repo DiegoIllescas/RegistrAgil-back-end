@@ -27,6 +27,16 @@
     if($_SERVER['REQUEST_METHOD'] === "GET") {
         $auth = isAuth($headers, $keypass);
 
-        echo json_encode(["success" => true, "id_Inv" => $auth['payload']['idjunta'], 'maxAcom' => $auth['payload']['maxAcom'] ]);
+        if($auth['status'] == 200){    
+            echo json_encode(["success" => true, "id_Inv" => $auth['payload']['idjunta'], 'maxAcom' => $auth['payload']['maxAcom'] ]);
+        }else{
+            if($auth['status'] == 432) {
+                echo json_encode(['success' => false, 'error' => 'Sesion expirada']);
+            }else{
+                echo json_encode(['success' => false, 'error' => 'Sin autorizacion']);
+            }
+            
+        }
+
     }
 ?>

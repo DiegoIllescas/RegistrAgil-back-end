@@ -4,7 +4,7 @@
     header('Access-Control-Allow-Origin: *');
     header("Access-Control-Allow-Headers: X-API-KEY, Origin,X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
     header("Content-Type: application/json; charset=utf-8");
-    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH');
     header('Access-Control-Allow-Headers: Content-Type, Authorization');
     header('Access-Control-Max-Age: 3600'); // 1 hour cache
 
@@ -59,7 +59,25 @@
     
     //cambiar contrasna o foto
     if($_SERVER['REQUEST_METHOD'] === 'PATCH') {
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
 
+        if(isset($data['clave'])) {
+            //Cambiar contraseña
+            $query = "UPDATE Usuario SET clave = :clave WHERE id_usuario = :id_usuario";
+            $stmt = $dbConn->prepare($query);
+            $stmt->bindValue(':clave', password_hash($data['clave'], PASSWORD_DEFAULT));
+            $stmt->bindValue(':id_usuario', $userData['id_usuario']);
+            if($stmt->execute()) {
+                echo json_encode(['success' => true]);
+            }else{
+                header("HTTP/1.1 426");
+                echo json_encode(['success' => false, 'error' => 'No se pudo actualizar tu contraseña']);
+            }
+        }
+        if(isset($data['fotografia'])){
+            //Cambiar la foto
+        }
     }
     $dbConn = null;
 ?>

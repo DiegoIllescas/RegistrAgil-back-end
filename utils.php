@@ -101,6 +101,37 @@
         }
     }
 
+    function sendRestorePassword($correo, $idUsuario, $keyword) {
+        $mail = new PHPMailer(true);
+        try {
+            $mail->isSMTP();
+            $mail->Host         = 'smtp.gmail.com';
+            $mail->SMTPAuth     = true;
+            $mail->Username     = 'softwarelegends65@gmail.com';
+            $mail->Password     = 'prhj hhpo rnvs xrqj';
+            $mail->SMTPSecure   = PHPMailer::ENCRYPTION_SMTPS;
+            $mail->Port         = 465;
+
+            $mail->addAddress($correo);
+
+            $payload = [
+                'id_usuario' => $idUsuario,
+                'exp' => time() + 900
+            ];
+
+            $token = genToken($payload, $keyword);
+
+            $mail->isHTML(true);
+            $mail->Subject      = 'Recuperar Contraseña - RegistrAgil';
+            $mail->Body         = "<p>Para restaurar su contraseña ingrese al siguiente link</p><p>http://localhost:5173/ResetPassword?token=$token</p>";
+
+            $mail->send();
+            return true;
+        }catch(Exception $e) {
+            return false;
+        }
+    }
+
     function sendInvitation($id_junta, $correo, $maxAcom, $data, $keyword) {
         $mail = new PHPMailer(true);
         try {
@@ -115,7 +146,7 @@
             $mail->addAddress($correo);
 
             $payload = [
-                'exp' => strtotime($data['fecha']) + 3600*12,
+                'exp' => time() + 7200,
                 'idjunta' => $id_junta,
                 'maxAcom' => $maxAcom
             ];
@@ -124,7 +155,45 @@
 
             $mail->isHTML(true);
             $mail->Subject      = $data['asunto'];
-            $mail->Body         = "<p>Has sido invitado por {$data['anfitrion']}</p><p>{$data['descripcion']}</p><p>La Junta es el dia {$data['fecha']} a las {$data['hora_inicio']}</p><p>...</p><p>Ingresa al siguiente link para confirmar tu asistencia:</p><p>http://localhost:5173/FormularioInvitado?token=$token</p>";
+            $mail->Body         = "
+                <div>
+                    <div style={background-color: #121212}>
+                        {$data['anfitrion']}
+                    </div>
+                </div>
+            ";
+
+            $mail->send();
+            return true;
+        }catch(Exception $e) {
+            return false;
+        }
+    }
+
+    function sendPrueba() {
+        $mail = new PHPMailer(true);
+        try {
+            $mail->isSMTP();
+            $mail->Host         = 'smtp.gmail.com';
+            $mail->SMTPAuth     = true;
+            $mail->Username     = 'softwarelegends65@gmail.com';
+            $mail->Password     = 'prhj hhpo rnvs xrqj';
+            $mail->SMTPSecure   = PHPMailer::ENCRYPTION_SMTPS;
+            $mail->Port         = 465;
+
+            $mail->addAddress("dillescas365@gmail.com");
+
+            
+
+            $mail->isHTML(true);
+            $mail->Subject      = "Prueba HTML";
+            $mail->Body         = "
+                <div>
+                    <div style='background-color: #121212'>
+                        Prueba de mandar html con estilos css
+                    </div>
+                </div>
+            ";
 
             $mail->send();
             return true;
