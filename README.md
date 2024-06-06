@@ -30,9 +30,11 @@ Dentro de `config.php` especificar con que base de datos vas a utilizar.
 
    Metodo POST para ALTAS
 
-   Metodo DELTE para BAJAS
+   Metodo DELETE para BAJAS
 
-   Metodo PUT para CAMBIOS
+   Metodo PUT para CAMBIOS grandes
+
+   Metodo PATCH para CAMBIO de solo un atributo (contraseña y fto)
 
    Metodo GET para CONSULTAS
 
