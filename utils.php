@@ -155,13 +155,7 @@
 
             $mail->isHTML(true);
             $mail->Subject      = $data['asunto'];
-            $mail->Body         = "
-                <div>
-                    <div style={background-color: #121212}>
-                        {$data['anfitrion']}
-                    </div>
-                </div>
-            ";
+            $mail->Body         = "ha sido invitado a ..... ingrese al siguiente link: https://localhost:5173/FormularioInvitado?token=$token";
 
             $mail->send();
             return true;

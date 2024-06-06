@@ -91,7 +91,7 @@
                 header("HTTP/1.1 412 Precondition Failed");
                 echo json_encode(['success' => false, 'error' => 'No existe una cuenta con este correo']);
             }
-
+            $stmt = null;
         }else{
             header("HTTP/1.1 400 Bad Request");
             echo json_encode(['success' => false, 'error' => 'Faltan parametros']);

@@ -13,7 +13,7 @@ CREATE TABLE Usuario (
     fotografia nvarchar(100),
     telefono nvarchar(10),
     permisos int(11),
-    clave nvarchar(60)
+    clave nvarchar(255)
 );
 
 CREATE TABLE Empleado (
@@ -97,3 +97,11 @@ INSERT INTO Empleado (id_usuario, direccion, departamento) VALUE (3, 'Av. Juan d
 INSERT INTO Empleado (id_usuario, direccion, departamento) VALUE (4, 'Av. Juan de Dios Bátiz s/n esq. Av. Miguel Othón de Mendizabal. Colonia Lindavista. Alcaldia: Gustavo A. Madero. C. P. 07738. Ciudad de México.', 'Recepcion');
 
 INSERT INTO Invitado (id_usuario, tipo_identificacion) VALUE (5, 'Pasaporte');
+
+INSERT INTO Junta (id_anfitrion, asunto, sala, fecha, hora_inicio, hora_fin, descripcion, direccion) VALUES (1, 'Importancia de los frameworks', '4102', '2024-06-07', '13:30', '16:30', 'Platica sobre la importancia de React, Angular, Astro, etc... en el entorno del desarrollo de Software', 'Av. Juan de Dios Bátiz s/n esq. Av. Miguel Othón de Mendizabal. Colonia Lindavista. Alcaldia: Gustavo A. Madero. C. P. 07738. Ciudad de México.');
+
+INSERT INTO Junta (id_anfitrion, asunto, sala, fecha, hora_inicio, hora_fin, descripcion, direccion) VALUES (2, 'DevOps', '3204', '2024-06-10', '12:30', '18:30', 'Platica sobre el uso de Docker y servicios en la Nube como Google Cloud, AWS, Azure para hacer deploy.', 'Av. Juan de Dios Bátiz s/n esq. Av. Miguel Othón de Mendizabal. Colonia Lindavista. Alcaldia: Gustavo A. Madero. C. P. 07738. Ciudad de México.');
+
+INSERT INTO InvitadosPorJunta (id_junta, id_invitado, estado) VALUE (1, 1, 'Pendiente');
+
+INSERT INTO InvitadosPorJunta (id_junta, id_invitado, estado) VALUE (2, 1, 'Pendiente');
