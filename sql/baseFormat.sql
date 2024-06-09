@@ -66,7 +66,7 @@ CREATE TABLE InvitadosPorJunta (
     entrada time,
     salida time,
     invitado_por int unsigned,
-    estado nvarchar(10) not null,
+    estado nvarchar(20) not null,
     foreign key (id_junta) references Junta(id_junta) ON DELETE CASCADE,
     foreign key (id_invitado) references Invitado(id_invitado),
     foreign key (id_automovil) references Automovil(id_automovil),
@@ -98,6 +98,7 @@ INSERT INTO Empleado (id_usuario, direccion, departamento) VALUE (4, 'Av. Juan d
 
 INSERT INTO Invitado (id_usuario, tipo_identificacion) VALUE (5, 'Pasaporte');
 
+<<<<<<< Updated upstream
 INSERT INTO Junta (id_anfitrion, asunto, sala, fecha, hora_inicio, hora_fin, descripcion, direccion) VALUES (1, 'Importancia de los frameworks', '4102', '2024-06-07', '13:30', '16:30', 'Platica sobre la importancia de React, Angular, Astro, etc... en el entorno del desarrollo de Software', 'Av. Juan de Dios Bátiz s/n esq. Av. Miguel Othón de Mendizabal. Colonia Lindavista. Alcaldia: Gustavo A. Madero. C. P. 07738. Ciudad de México.');
 
 INSERT INTO Junta (id_anfitrion, asunto, sala, fecha, hora_inicio, hora_fin, descripcion, direccion) VALUES (2, 'DevOps', '3204', '2024-06-10', '12:30', '18:30', 'Platica sobre el uso de Docker y servicios en la Nube como Google Cloud, AWS, Azure para hacer deploy.', 'Av. Juan de Dios Bátiz s/n esq. Av. Miguel Othón de Mendizabal. Colonia Lindavista. Alcaldia: Gustavo A. Madero. C. P. 07738. Ciudad de México.');
@@ -105,3 +106,14 @@ INSERT INTO Junta (id_anfitrion, asunto, sala, fecha, hora_inicio, hora_fin, des
 INSERT INTO InvitadosPorJunta (id_junta, id_invitado, estado) VALUE (1, 1, 'Pendiente');
 
 INSERT INTO InvitadosPorJunta (id_junta, id_invitado, estado) VALUE (2, 1, 'Pendiente');
+=======
+INSERT INTO Junta (id_anfitrion, asunto, sala, fecha, hora_inicio, hora_fin, descripcion, direccion) VALUE (1, "Revision de Avances de Proyecto", "1113", "2024-06-03", "8:30", "10:00", "Presentacion de Avances de Proyecto hechos durante el sprint pasado", "Av. Juan de Dios Bátiz s/n esq. Av. Miguel Othón de Mendizabal. Colonia Lindavista. Alcaldia: Gustavo A. Madero. C. P. 07738. Ciudad de México.");
+
+INSERT INTO Junta (id_anfitrion, asunto, sala, fecha, hora_inicio, hora_fin, descripcion, direccion) VALUE (1, "Presentacion del Proyecto", "1113", "2024-06-10", "8:30", "10:30", "Presentacion del Proyecto integrado y funcional al cliente", "Av. Juan de Dios Bátiz s/n esq. Av. Miguel Othón de Mendizabal. Colonia Lindavista. Alcaldia: Gustavo A. Madero. C. P. 07738. Ciudad de México.");
+
+INSERT INTO Junta (id_anfitrion, asunto, sala, fecha, hora_inicio, hora_fin, descripcion, direccion) VALUE (2, "Negociacion de Acuerdo Comercial", "1114", "2024-06-10", "10:30", "12:00", "Negociacion de Acuerdo Comercial para la Distribucion del Proyecto", "Av. Juan de Dios Bátiz s/n esq. Av. Miguel Othón de Mendizabal. Colonia Lindavista. Alcaldia: Gustavo A. Madero. C. P. 07738. Ciudad de México.");
+
+INSERT INTO Junta (id_anfitrion, asunto, sala, fecha, hora_inicio, hora_fin, descripcion, direccion) VALUE (1, "Establecimiento de Requerimientos de nuevo Proyecto", "1113", "2024-06-15", "8:30", "10:00", "Junta para discutir las necesidades a cumplir por el sistema solicitado", "Av. Juan de Dios Bátiz s/n esq. Av. Miguel Othón de Mendizabal. Colonia Lindavista. Alcaldia: Gustavo A. Madero. C. P. 07738. Ciudad de México.");
+
+INSERT INTO InvitadosPorJunta (id_junta, id_invitado, entrada, salida, estado) VALUE (1, 1, "8:28:43", "10:02:34", "Expirada");
+>>>>>>> Stashed changes
