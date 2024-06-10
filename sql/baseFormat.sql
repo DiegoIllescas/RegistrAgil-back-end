@@ -13,7 +13,8 @@ CREATE TABLE Usuario (
     fotografia nvarchar(100),
     telefono nvarchar(10),
     permisos int(11),
-    clave nvarchar(255)
+    clave nvarchar(255),
+    lastUpdatePass date
 );
 
 CREATE TABLE Empleado (
@@ -47,7 +48,7 @@ CREATE TABLE Automovil (
 CREATE TABLE Junta (
     id_junta int unsigned not null primary key auto_increment,
     id_anfitrion int unsigned not null,
-    asunto nvarchar(50) not null,
+    asunto nvarchar(255) not null,
     sala nvarchar(50) not null,
     fecha date not null,
     hora_inicio time not null,
@@ -106,4 +107,6 @@ INSERT INTO Junta (id_anfitrion, asunto, sala, fecha, hora_inicio, hora_fin, des
 
 INSERT INTO Junta (id_anfitrion, asunto, sala, fecha, hora_inicio, hora_fin, descripcion, direccion) VALUE (1, "Establecimiento de Requerimientos de nuevo Proyecto", "1113", "2024-06-15", "8:30", "10:00", "Junta para discutir las necesidades a cumplir por el sistema solicitado", "Av. Juan de Dios Bátiz s/n esq. Av. Miguel Othón de Mendizabal. Colonia Lindavista. Alcaldia: Gustavo A. Madero. C. P. 07738. Ciudad de México.");
 
-INSERT INTO InvitadosPorJunta (id_junta, id_invitado, entrada, salida, estado) VALUE (1, 1, "8:28:43", "10:02:34", "Expirada");
+INSERT INTO Automovil (modelo, color, placa) VALUE ("Sedán", "Rojo", "PCH-96-04");
+
+INSERT INTO InvitadosPorJunta (id_junta, id_invitado, id_automovil, entrada, salida, estado) VALUE (1, 1, 1, "8:28:43", "10:02:34", "Expirada");

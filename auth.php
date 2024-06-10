@@ -43,7 +43,7 @@
                 $res = $stmt->fetch();
                 if(password_verify($data['password'], $res['clave'])) {
                     $payload = [
-                        'exp' => time() + 3600,
+                        'exp' => time() + 10800,
                         'id_usuario' => $res['id_usuario'],
                         'permisos' => $res['permisos']
                     ];

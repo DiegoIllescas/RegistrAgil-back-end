@@ -4,7 +4,7 @@
     header('Access-Control-Allow-Origin: *');
     header("Access-Control-Allow-Headers: X-API-KEY, Origin,X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
     header("Content-Type: application/json; charset=utf-8");
-    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH');
     header('Access-Control-Allow-Headers: Content-Type, Authorization');
     header('Access-Control-Max-Age: 3600'); // 1 hour cache
 
@@ -145,6 +145,35 @@
                     echo json_encode(['success' => false, 'error' => 'No se pudo agendar la junta']);
                 }
                 $stmt = null;   
+            }else if(isset($data['mes'], $data['year'])) {
+                if($userData['permisos'] === 1) {
+                    $query = "SELECT CONCAT(Usuario.nombre, ' ', Usuario.apellido_paterno) AS anfitrion, Junta.asunto, Junta.sala, Junta.fecha, Junta.hora_inicio, Junta.hora_fin, Junta.descripcion, Junta.direccion  FROM Junta INNER JOIN Empleado ON Junta.id_anfitrion = Empleado.id_empleado INNER JOIN Usuario ON Empleado.id_usuario = Usuario.id_usuario WHERE MONTH(Junta.fecha) = :mes AND YEAR(Junta.fecha) = :yr";
+                    $stmt = $dbConn->prepare($query);
+                    $stmt->bindValue(':mes', $data['mes']);
+                    $stmt->bindValue(':yr', $data['year']);
+                    $stmt->execute();
+                    
+                    if($stmt->rowCount() > 0){
+                        $res = $stmt->fetchAll();
+                        echo json_encode(['success' => true, 'juntas' => $res]);
+                    }else{
+                        echo json_encode(['success' => true, 'juntas' => []]);
+                    }
+                }else{
+                    $query = "SELECT CONCAT(Usuario.nombre, ' ', Usuario.apellido_paterno) AS anfitrion, Junta.asunto, Junta.sala, Junta.fecha, Junta.hora_inicio, Junta.hora_fin, Junta.descripcion, Junta.direccion  FROM Junta INNER JOIN Empleado ON Junta.id_anfitrion = Empleado.id_empleado INNER JOIN Usuario ON Empleado.id_usuario = Usuario.id_usuario WHERE MONTH(Junta.fecha) = :mes AND YEAR(Junta.fecha) = :yr AND Usuario.id_usuario = :user";
+                    $stmt = $dbConn->prepare($query);
+                    $stmt->bindValue(':mes', $data['mes']);
+                    $stmt->bindValue(':yr', $data['year']);
+                    $stmt->bindValue(':user', $userData['id_usuario']);
+                    $stmt->execute();
+                    
+                    if($stmt->rowCount() > 0){
+                        $res = $stmt->fetchAll();
+                        echo json_encode(['success' => true, 'juntas' => $res]);
+                    }else{
+                        echo json_encode(['success' => true, 'juntas' => []]);
+                    }
+                }
             }else{
                 header("HTTP/1.1 400 Bad Request");
                 echo json_encode(['success' => false, 'error' => 'Faltan atributos']);
