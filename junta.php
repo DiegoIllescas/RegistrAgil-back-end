@@ -65,7 +65,7 @@
             if(isset($data['asunto'], $data['sala'], $data['fecha'], $data['hora_inicio'], $data['hora_fin'], $data['descripcion'], $data['direccion'], $data['invitados'])) {
                 
                 //Obtener id del anfitrion
-                $query = "SELECT Empleado.id_empleado, Usuario.nombre, Usuario.apellido_paterno, Usuario.apellido_materno FROM Empleado INNER JOIN Usuario ON Empleado.id_usuario = Usuario.id_usuario WHERE Empleado.id_usuario = ? AND departamento != 'Recepcion'";
+                $query = "SELECT Empleado.id_empleado, Usuario.nombre, Usuario.apellido_paterno, Usuario.apellido_materno, Usuario.empresa, Usuario.correo, Usuario.telefono FROM Empleado INNER JOIN Usuario ON Empleado.id_usuario = Usuario.id_usuario WHERE Empleado.id_usuario = ? AND departamento != 'Recepcion'";
                 $stmt = $dbConn->prepare($query);
                 $stmt->bindParam(1, $userData['id_usuario']);
                 $stmt->execute();
@@ -73,6 +73,9 @@
                 $res = $stmt->fetch();
 
                 $anfitrion = $res['nombre']." ".$res['apellido_paterno']." ".$res['apellido_materno'];
+                $empresa = $res['empresa'];
+                $anfitrionCorreo = $res['correo'];
+                $telefono = $res['telefono'];
 
                 //Damos de alta la junta
                 $query = "INSERT INTO Junta (id_anfitrion, asunto, sala, fecha, hora_inicio, hora_fin, descripcion, direccion) VALUE (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -139,7 +142,10 @@
                             "hora_inicio" => $data['hora_inicio'],
                             "hora_fin" => $data['hora_fin'],
                             "descripcion" => $data['descripcion'],
-                            "direccion" => $data['direccion']
+                            "direccion" => $data['direccion'],
+                            "empresa" => $empresa,
+                            "anfitrionCorreo" => $anfitrionCorreo,
+                            "telefono" => $telefono
                         ];
 
                         $flag = $flag && sendInvitation($idQR, $invitado['correo'], $invitado['acompañantes'], $content, $keypass);
@@ -192,7 +198,7 @@
     if($_SERVER['REQUEST_METHOD'] === 'GET') {
         $date = date('Y-m-d');
         if($userData['permisos'] == 1) {
-            $query = "SELECT Junta.id_junta, Junta.fecha, Junta.hora_inicio, Junta.hora_fin, Usuario.nombre, Usuario.apellido_paterno, Usuario.apellido_materno, Junta.asunto, Junta.sala, Junta.descripcion FROM Junta INNER JOIN Empleado ON Junta.id_anfitrion = Empleado.id_empleado INNER JOIN Usuario ON Empleado.id_usuario = Usuario.id_usuario WHERE Junta.fecha >= ?";
+            $query = "SELECT Junta.id_junta as id, Junta.fecha, Junta.hora_inicio, Junta.hora_fin, Usuario.nombre, Usuario.apellido_paterno, Usuario.apellido_materno, Junta.asunto, Junta.sala, Junta.descripcion FROM Junta INNER JOIN Empleado ON Junta.id_anfitrion = Empleado.id_empleado INNER JOIN Usuario ON Empleado.id_usuario = Usuario.id_usuario WHERE Junta.fecha >= ? ORDER BY Junta.fecha";
             $stmt = $dbConn->prepare($query);
             $stmt->bindParam(1, $date);
             $stmt->execute();
@@ -204,6 +210,8 @@
                     $stmt = $dbConn->prepare($query);
                     $stmt->bindParam(1, $junta['id_junta']);
                     $stmt->execute();
+
+                    unset($junta['id_junta']);
 
                     if($stmt->rowCount() > 0) {
                         $invitados = $stmt->fetchAll();
@@ -217,18 +225,90 @@
 
             }
         }else{
+            $query = "SELECT Junta.id_junta as id, Junta.fecha, Junta.hora_inicio, Junta.hora_fin, Usuario.nombre, Usuario.apellido_paterno, Usuario.apellido_materno, Junta.asunto, Junta.sala, Junta.descripcion FROM Junta INNER JOIN Empleado ON Junta.id_anfitrion = Empleado.id_empleado INNER JOIN Usuario ON Empleado.id_usuario = Usuario.id_usuario WHERE Junta.fecha >= ? AND Usuario.id_usuario = ? ORDER BY Junta.fecha";
+            $stmt = $dbConn->prepare($query);
+            $stmt->bindParam(1, $date);
+            $stmt->bindParam(2, $userData['id_usuario']);
+            $stmt->execute();
 
+            if($stmt->rowCount() > 0) {
+                $juntas = $stmt->fetchAll();
+                foreach($juntas as &$junta) {
+                    $query = "SELECT CONCAT(Usuario.nombre, ' ', Usuario.apellido_paterno, ' ', Usuario.apellido_materno) as nombre, Usuario.correo FROM InvitadosPorJunta INNER JOIN Invitado ON InvitadosPorJunta.id_invitado = Invitado.id_invitado INNER JOIN Usuario ON Invitado.id_usuario = Usuario.id_usuario WHERE InvitadosPorJunta.id_junta = ?";
+                    $stmt = $dbConn->prepare($query);
+                    $stmt->bindParam(1, $junta['id']);
+                    $stmt->execute();
+
+                    if($stmt->rowCount() > 0) {
+                        $invitados = $stmt->fetchAll();
+                        $junta['invitados'] = $invitados;
+                    }else{
+                        $junta['invitados'] = [];
+                    }
+                }
+
+                echo json_encode(['success' => true, 'juntas' => $juntas]);
+
+            }
         }
     }
 
     //Eliminar(Cancelar) Junta
     if($_SERVER['REQUEST_METHOD'] === 'DELETE') {
-        
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+
+        if(!$data) {
+            header("HTTP/1.1 400 Bad Request");
+            echo json_encode(['success' => false, 'error' => 'Falta el JSON']);
+            exit();
+        }
+
+        if(isset($data['id_junta'])) {
+            $query = "DELETE FROM Junta WHERE id_junta = ?";
+            $stmt = $dbConn->prepare($query);
+            $stmt->bindParam(1, $data['id_junta']);
+            if($stmt->execute()) {
+                echo json_encode(['success' => true, 'message' => 'La junta fue cancelada con exito']);
+            }else{
+                echo json_encode(['success' => false, 'error' => 'No se pudo cancelar la junta']);
+            }
+        }else{
+            header("HTTP/1.1 400 Bad Request");
+            echo json_encode(['success' => false, 'error' => 'Faltan atributos']);
+        }
     }
 
     //Editar Junta
     if($_SERVER['REQUEST_METHOD'] === 'PUT') {
-        
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+
+        if(!$data) {
+            header("HTTP/1.1 400 Bad Request");
+            echo json_encode(['success' => false, 'error' => 'Falta el JSON']);
+            exit();
+        }
+
+        if(isset($data['id_junta'], $data['asunto'], $data['descripcion'], $data['fecha'], $data['hora_inicio'], $data['hora_fin'], $data['sala'])) {
+            $query = "UPDATE Junta SET asunto = :asunto, descripcion = :descripcion, fecha = :fecha, hora_inicio = :hora_inicio, hora_fin = :hora_fin, sala = :sala WHERE id_junta = :id";
+            $stmt = $dbConn->prepare($query);
+            $stmt->bindValue(':asunto', $data['asunto']);
+            $stmt->bindValue(':descripcion', $data['descripcion']);
+            $stmt->bindValue(':fecha', $data['fecha']);
+            $stmt->bindValue(':hora_inicio', $data['hora_inicio']);
+            $stmt->bindValue(':hora_fin', $data['hora_fin']);
+            $stmt->bindValue(':sala', $data['sala']);
+            $stmt->bindValue(':id', $data['id_junta']);
+            if($stmt->execute()) {
+                echo json_encode(['success' => true, 'message' => 'La junta fue editada con exito']);
+            }else{
+                echo json_encode(['success' => false, 'error' => 'No se pudo editar la junta']);
+            }
+        }else{
+            header("HTTP/1.1 400 Bad Request");
+            echo json_encode(['success' => false, 'error' => 'Faltan atributos']);
+        }
     }
 
     $dbConn = null;

@@ -155,7 +155,149 @@
 
             $mail->isHTML(true);
             $mail->Subject      = $data['asunto'];
-            $mail->Body         = "ha sido invitado a ..... ingrese al siguiente link: https://localhost:5173/FormularioInvitado?token=$token";
+            $mail->Body         = "<!DOCTYPE html>
+<html lang='es'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>RegistrÁgil</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #88C7FF;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .informacion-reunion {
+            margin-bottom: 30px;
+        }
+
+        .registro {
+            text-align: center;
+        }
+        .mensaje{
+            text-align: center;
+        }
+        .btn-registro {
+            background-color: #88C7FF;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-registro:hover {
+            background-color: #007BFF;
+        }
+
+        .anfitrion {
+            margin-top: 30px;
+        }
+
+        footer {
+            background-color: #88C7FF;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+        }
+    </style>
+    <meta charset='UTF-8'>
+</head>
+<body>
+    <header>
+        <div class='container'>
+            <img src='logo.png' alt='Logo de RegistrÁgil' style='width: 200px; height: auto;'>
+        </div>
+    </header>
+
+    <main>
+        <div class='container'>
+
+            <section class='mensaje'>
+            <p>Es un placer para nosotros informarte que estás invitado a una reunión en {$data['empresa']}. </p>
+ 
+            </section>
+
+
+            <section class='informacion-reunion'>
+                <h2>Detalles de la reunión:</h2>
+                <ul>
+                    <li>Fecha: {$data['fecha']}</li>
+                    <li>Hora: {$data['hora_inicio']} </li>
+                    <li>Sala: {$data['sala']}</li>
+                    <li>Dirección: {$data['direccion']}</li>
+                    <li>Anfitrión: {$data['anfitrion']}</li>
+                </ul>
+            </section>
+
+            <section class='asunto-reunion'>
+                <h2>Asunto de la Reunión</h2>
+                <ul>
+                    <li>{$data['asunto']}</li>
+                </ul>
+            </section>
+
+            <section class='registro'>
+                <h2>Registro previo:</h2>
+                <p>Para prepararnos para tu visita y facilitar tu acceso a nuestras instalaciones, es necesario realizar tu registro previo en el siguiente enlace:</p>
+                <a href='http://localhost:5173/FormularioInvitado?token=$token' class='btn-registro'>REGISTRAR</a>
+                <p>Al completar tu registro, recibirás un usuario y contraseña para ingresar a [RegistrÁgil] y descargar tu código QR de acceso. Este código es necesario para entrar al edificio el día de la reunión.</p>
+            </section>
+
+            <section class='anfitrion'>
+                <h2>Anfitrión:</h2>
+                <ul>
+                    <li>Nombre: {$data['anfitrion']}</li>
+                    <li>Correo electrónico: {$data['anfitrionCorreo']}</li>
+                    <li>Teléfono: {$data['telefono']}</li>
+                </ul>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class='container'>
+            <p>&copy; 2024 RegistrÁgil</p>
+        </div>
+    </footer>
+</body>
+</html>";
 
             $mail->send();
             return true;
