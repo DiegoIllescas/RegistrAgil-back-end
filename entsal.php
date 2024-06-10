@@ -47,7 +47,6 @@
     if($_SERVER['REQUEST_METHOD'] === 'GET') {
         if($userData['permisos'] == 1) {
             $date = date('Y-m-d');
-            //$date = "2024-06-03";
             $query = "SELECT CONCAT(a.nombre, ' ', a.apellido_paterno) AS invitado, a.telefono, a.correo, Junta.sala, CONCAT(b.nombre, ' ', b.apellido_paterno) AS encargado, Junta.asunto, InvitadosPorJunta.entrada, InvitadosPorJunta.salida, a.fotografia, Automovil.placa as placaAuto, Automovil.color as colorAuto, Automovil.modelo as modeloAuto FROM InvitadosPorJunta INNER JOIN Invitado ON InvitadosPorJunta.id_invitado = Invitado.id_invitado INNER JOIN Usuario AS a ON Invitado.id_usuario = a.id_usuario INNER JOIN Junta ON InvitadosPorJunta.id_junta = Junta.id_junta INNER JOIN Empleado ON Junta.id_anfitrion = Empleado.id_empleado INNER JOIN Usuario AS b ON Empleado.id_usuario = b.id_usuario LEFT JOIN Automovil ON InvitadosPorJunta.id_automovil = Automovil.id_automovil WHERE Junta.fecha = ? ;";
             $stmt = $dbConn->prepare($query);
             $stmt->bindParam(1, $date);

@@ -11,6 +11,9 @@
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
         exit(0);
     }
+
+    
+    date_default_timezone_set('America/Mexico_City');
     //Lectura de los headers de la peticion
     $headers = apache_request_headers();
     $isAuth = isAuth($headers, $keypass);
@@ -29,19 +32,10 @@
         exit();
     }
     
-    //Lectura de JSON
-    $json = file_get_contents('php://input');
-    $data = json_decode($json, true);
-
     //Obtener datos del token de autenticacion.
     $userData = $isAuth['payload'];
 
     //Error cuando no mandan un json bien formado
-    if(!$data) {
-        header("HTTP/1.1 400 Bad Request");
-        echo json_encode(['success' => false, 'error' => 'Falta el JSON']);
-        exit();
-    }
 
     //Establecimiento de la conexion a la BD
     $dbConn = connect($db);
@@ -55,6 +49,16 @@
 
     //Crear Junta
     if($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+
+        if(!$data) {
+            header("HTTP/1.1 400 Bad Request");
+            echo json_encode(['success' => false, 'error' => 'Falta el JSON']);
+            exit();
+        }
+
         //Revisar permisos de creacion de Junta (Unicamente Admin y Anfitrion)
         if($userData['permisos'] === 1 || $userData['permisos'] === 4) {
             //Comprobar los atributos obligatorios
@@ -186,7 +190,35 @@
 
     //Consultar Juntas
     if($_SERVER['REQUEST_METHOD'] === 'GET') {
-        
+        $date = date('Y-m-d');
+        if($userData['permisos'] == 1) {
+            $query = "SELECT Junta.id_junta, Junta.fecha, Junta.hora_inicio, Junta.hora_fin, Usuario.nombre, Usuario.apellido_paterno, Usuario.apellido_materno, Junta.asunto, Junta.sala, Junta.descripcion FROM Junta INNER JOIN Empleado ON Junta.id_anfitrion = Empleado.id_empleado INNER JOIN Usuario ON Empleado.id_usuario = Usuario.id_usuario WHERE Junta.fecha >= ?";
+            $stmt = $dbConn->prepare($query);
+            $stmt->bindParam(1, $date);
+            $stmt->execute();
+
+            if($stmt->rowCount() > 0) {
+                $juntas = $stmt->fetchAll();
+                foreach($juntas as &$junta) {
+                    $query = "SELECT CONCAT(Usuario.nombre, ' ', Usuario.apellido_paterno, ' ', Usuario.apellido_materno) as nombre, Usuario.correo FROM InvitadosPorJunta INNER JOIN Invitado ON InvitadosPorJunta.id_invitado = Invitado.id_invitado INNER JOIN Usuario ON Invitado.id_usuario = Usuario.id_usuario WHERE InvitadosPorJunta.id_junta = ?";
+                    $stmt = $dbConn->prepare($query);
+                    $stmt->bindParam(1, $junta['id_junta']);
+                    $stmt->execute();
+
+                    if($stmt->rowCount() > 0) {
+                        $invitados = $stmt->fetchAll();
+                        $junta['invitados'] = $invitados;
+                    }else{
+                        $junta['invitados'] = [];
+                    }
+                }
+
+                echo json_encode(['success' => true, 'juntas' => $juntas]);
+
+            }
+        }else{
+
+        }
     }
 
     //Eliminar(Cancelar) Junta
