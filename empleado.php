@@ -17,14 +17,12 @@
     
     //Error si el Token de Sesion expiro
     if($isAuth['status'] == 432) {
-        header("HTTP/1.1 308 Session Expired");
         echo json_encode(['success' => false, 'error' => 'Sesion expirada']);
         exit();
     }
 
     //Error si no incluye el Token de Autenticacion
     if($isAuth['status'] == 401) {
-        header("HTTP/1.1 401 Unauthorized");
         echo json_encode(['success' => false, 'error' => 'No estas logueado']);
         exit();
     }
@@ -38,14 +36,12 @@
 
     //Error cuando no mandan un json bien formado
     if(!$data) {
-        header("HTTP/1.1 400 Bad Request");
         echo json_encode(['success' => false, 'error' => 'Falta el JSON']);
         exit();
     }
 
     //Comprobacion del permiso para estas acciones (Unicamente Admin[1])
     if($adminData['permisos'] != 1) {
-        header("HTTP/1.1 401 Unauthorized");
         echo json_encode(['success' => false, 'error' => 'No estas autorizado para estas acciones']);
         exit();
     }
@@ -55,7 +51,6 @@
 
     //Si no se pudo conectar a la base
     if(!$dbConn) {
-        header("HTTP/1.1 503 Service Unavailable");
         echo json_encode(['success' => false, 'error' => 'Servicio no disponible']);
         exit();
     }
@@ -130,15 +125,12 @@
                     $stmt->execute();
 
                     unlink($url);
-
-                    header("HTTP/1.1 503 Service Unavailable");
                     echo json_encode(['success' => false, 'error' => 'No se pudo mandar el correo al empleado']);
                 }else{
                     echo json_encode(['success' => true, 'message' => 'Cuenta creada con exito']);
                 }                
             }else{
                 //Ya existe una cuenta con ese correo
-                header("HTTP/1.1 412 Precondition Failed");
                 echo json_encode(['success' => false, 'error' => 'Ya existe un usuario con esta cuenta']);
             }
             $stmt = null;
@@ -164,12 +156,10 @@
                 }
                 echo json_encode(['success' => true, 'content' => $res]);
             }else{
-                header("HTTP/1.1 412 Precondition Failed");
                 echo json_encode(['success' => false, 'error' => 'No existe un empleado asociado al correo ingresado']);
             }
             $stmt = null;
         } else {
-            header("HTTP/1.1 400 Bad Request");
             echo json_encode(['success' => false, 'error' => 'Faltan atributos']);
         }
     }
@@ -206,7 +196,6 @@
             }
             $stmt = null;
         }else{
-            header("HTTP/1.1 400 Bad Request");
             echo json_encode(['success' => false, 'error' => 'Falta atributo correo']);
         }
     }
@@ -245,7 +234,6 @@
             echo json_encode(["success" => true]);
             /* Iterar cada parametro pasado para actualizarlo en la BD */
         }else{
-            header("HTTP/1.1 400 Bad Request");
             echo json_encode(['success' => false, 'error' => 'Falta atributo correo']);
         }
     }

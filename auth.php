@@ -17,7 +17,6 @@
 
     //Error cuando no mandan un json bien formado
     if(!$data) {
-        header("HTTP/1.1 400 Bad Request");
         echo json_encode(['success' => false, 'error' => 'Falta el JSON']);
         exit();
     }
@@ -26,7 +25,6 @@
     $dbConn = connect($db);
 
     if(!$dbConn) {
-        header("HTTP/1.1 503 Service Unavailable");
         echo json_encode(['success' => false, 'error' => 'Servicio no disponible']);
         exit();
     }
@@ -48,19 +46,16 @@
                         'permisos' => $res['permisos']
                     ];
                     $token = genToken($payload, $keypass);
-                    header("HTTP/1.1 200 OK");
+                    
                     echo json_encode(['success' => true, 'permisos' => $res['permisos'] ,'content' => ['correo' => $data['correo'], 'token' => $token]]);
                 }else{
-                    header("HTTP/1.1 412 Precondition Failed");
                     echo json_encode(['success' => false, 'error' => 'Contraseña incorrecta']);
                 }
             }else{
-                header("HTTP/1.1 412 Precondition Failed");
                 echo json_encode(['success' => false, 'error' => 'Usuario no registrado']);
             }
             $stmt = null;
         }else {
-            header("HTTP/1.1 400 Bad Request");
             echo json_encode(['success' => false, 'error' => 'Faltan parametros']);
         }
     }
@@ -74,26 +69,31 @@
     if($_SERVER['REQUEST_METHOD'] === 'PATCH') {
         if(isset($data['correo'])) {
 
-            $query = "SELECT id_usuario FROM Usuario WHERE correo = ?";
+            $query = "SELECT id_usuario, lastUpdatePass FROM Usuario WHERE correo = ?";
             $stmt = $dbConn->prepare($query);
             $stmt->bindParam(1, $data['correo']);
             $stmt->execute();
 
-            if($stmt->rowCount() > 0) {
-                $res = $stmt->fetch();
-                
-                if(sendRestorePassword($data['correo'], $res['id_usuario'], $keypass)) {
-                    echo json_encode(['success' => true]);
+            $date = date('Y-m-d');
+            $res = $stmt->fetch();
+            $diff = round( ((strtotime($date) - strtotime($res['lastUpdatePass'])) / 31556926  ) * 12 );
+
+            if($diff > 0) {
+                if($stmt->rowCount() > 0) {
+                    
+                    if(sendRestorePassword($data['correo'], $res['id_usuario'], $keypass)) {
+                        echo json_encode(['success' => true]);
+                    }else{
+                        echo json_encode(['success' => false, 'error' => 'No se pudo enviar el correo, intentelo mas tarde']);
+                    }
                 }else{
-                    echo json_encode(['success' => false, 'error' => 'No se pudo enviar el correo, intentelo mas tarde']);
+                    echo json_encode(['success' => false, 'error' => 'No existe una cuenta con este correo']);
                 }
             }else{
-                header("HTTP/1.1 412 Precondition Failed");
-                echo json_encode(['success' => false, 'error' => 'No existe una cuenta con este correo']);
+                echo json_encode(['success' => false, 'error' => 'La contraseña actual se actualizó hace menos de 1 mes.']);
             }
             $stmt = null;
         }else{
-            header("HTTP/1.1 400 Bad Request");
             echo json_encode(['success' => false, 'error' => 'Faltan parametros']);
         }
     }

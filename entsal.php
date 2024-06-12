@@ -19,14 +19,12 @@
     
     //Error si el Token de Sesion expiro
     if($isAuth['status'] == 432) {
-        header("HTTP/1.1 308 Session Expired");
         echo json_encode(['success' => false, 'error' => 'Sesion expirada']);
         exit();
     }
 
     //Error si no incluye el Token de Autenticacion
     if($isAuth['status'] == 401) {
-        header("HTTP/1.1 401 Unauthorized");
         echo json_encode(['success' => false, 'error' => 'No estas logueado']);
         exit();
     }
@@ -39,7 +37,6 @@
 
     //Si no se pudo conectar a la base
     if(!$dbConn) {
-        header("HTTP/1.1 503 Service Unavailable");
         echo json_encode(['success' => false, 'error' => 'Servicio no disponible']);
         exit();
     }
@@ -65,7 +62,6 @@
             }
             $stmt = null;
         }else {
-            header("HTTP/1.1 401 Unauthorized");
             echo json_encode(['success' => false, 'error' => 'No estas logueado']);
         }
     }
