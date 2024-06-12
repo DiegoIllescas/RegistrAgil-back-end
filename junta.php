@@ -157,20 +157,33 @@
                 $stmt = null;   
             }else if(isset($data['mes'], $data['year'])) {
                 if($userData['permisos'] === 1) {
-                    $query = "SELECT CONCAT(Usuario.nombre, ' ', Usuario.apellido_paterno) AS anfitrion, Junta.asunto, Junta.sala, Junta.fecha, Junta.hora_inicio, Junta.hora_fin, Junta.descripcion, Junta.direccion  FROM Junta INNER JOIN Empleado ON Junta.id_anfitrion = Empleado.id_empleado INNER JOIN Usuario ON Empleado.id_usuario = Usuario.id_usuario WHERE MONTH(Junta.fecha) = :mes AND YEAR(Junta.fecha) = :yr";
+                    $query = "SELECT Junta.id_junta as id, CONCAT(Usuario.nombre, ' ', Usuario.apellido_paterno) AS anfitrion, Junta.asunto, Junta.sala, Junta.fecha, Junta.hora_inicio, Junta.hora_fin, Junta.descripcion, Junta.direccion  FROM Junta INNER JOIN Empleado ON Junta.id_anfitrion = Empleado.id_empleado INNER JOIN Usuario ON Empleado.id_usuario = Usuario.id_usuario WHERE MONTH(Junta.fecha) = :mes AND YEAR(Junta.fecha) = :yr";
                     $stmt = $dbConn->prepare($query);
                     $stmt->bindValue(':mes', $data['mes']);
                     $stmt->bindValue(':yr', $data['year']);
                     $stmt->execute();
                     
                     if($stmt->rowCount() > 0){
-                        $res = $stmt->fetchAll();
-                        echo json_encode(['success' => true, 'juntas' => $res]);
+                        $juntas = $stmt->fetchAll();
+                        foreach($juntas as &$junta) {
+                            $query = "SELECT CONCAT(Usuario.nombre, ' ', Usuario.apellido_paterno, ' ', Usuario.apellido_materno) as nombre, Usuario.correo FROM InvitadosPorJunta INNER JOIN Invitado ON InvitadosPorJunta.id_invitado = Invitado.id_invitado INNER JOIN Usuario ON Invitado.id_usuario = Usuario.id_usuario WHERE InvitadosPorJunta.id_junta = ?";
+                            $stmt = $dbConn->prepare($query);
+                            $stmt->bindParam(1, $junta['id']);
+                            $stmt->execute();
+        
+                            if($stmt->rowCount() > 0) {
+                                $invitados = $stmt->fetchAll();
+                                $junta['invitados'] = $invitados;
+                            }else{
+                                $junta['invitados'] = [];
+                            }
+                        }
+                        echo json_encode(['success' => true, 'juntas' => $juntas]);
                     }else{
                         echo json_encode(['success' => true, 'juntas' => []]);
                     }
                 }else{
-                    $query = "SELECT CONCAT(Usuario.nombre, ' ', Usuario.apellido_paterno) AS anfitrion, Junta.asunto, Junta.sala, Junta.fecha, Junta.hora_inicio, Junta.hora_fin, Junta.descripcion, Junta.direccion  FROM Junta INNER JOIN Empleado ON Junta.id_anfitrion = Empleado.id_empleado INNER JOIN Usuario ON Empleado.id_usuario = Usuario.id_usuario WHERE MONTH(Junta.fecha) = :mes AND YEAR(Junta.fecha) = :yr AND Usuario.id_usuario = :user";
+                    $query = "SELECT Junta.id_junta as id, CONCAT(Usuario.nombre, ' ', Usuario.apellido_paterno) AS anfitrion, Junta.asunto, Junta.sala, Junta.fecha, Junta.hora_inicio, Junta.hora_fin, Junta.descripcion, Junta.direccion  FROM Junta INNER JOIN Empleado ON Junta.id_anfitrion = Empleado.id_empleado INNER JOIN Usuario ON Empleado.id_usuario = Usuario.id_usuario WHERE MONTH(Junta.fecha) = :mes AND YEAR(Junta.fecha) = :yr AND Usuario.id_usuario = :user";
                     $stmt = $dbConn->prepare($query);
                     $stmt->bindValue(':mes', $data['mes']);
                     $stmt->bindValue(':yr', $data['year']);
@@ -178,8 +191,21 @@
                     $stmt->execute();
                     
                     if($stmt->rowCount() > 0){
-                        $res = $stmt->fetchAll();
-                        echo json_encode(['success' => true, 'juntas' => $res]);
+                        $juntas = $stmt->fetchAll();
+                        foreach($juntas as &$junta) {
+                            $query = "SELECT CONCAT(Usuario.nombre, ' ', Usuario.apellido_paterno, ' ', Usuario.apellido_materno) as nombre, Usuario.correo FROM InvitadosPorJunta INNER JOIN Invitado ON InvitadosPorJunta.id_invitado = Invitado.id_invitado INNER JOIN Usuario ON Invitado.id_usuario = Usuario.id_usuario WHERE InvitadosPorJunta.id_junta = ?";
+                            $stmt = $dbConn->prepare($query);
+                            $stmt->bindParam(1, $junta['id']);
+                            $stmt->execute();
+        
+                            if($stmt->rowCount() > 0) {
+                                $invitados = $stmt->fetchAll();
+                                $junta['invitados'] = $invitados;
+                            }else{
+                                $junta['invitados'] = [];
+                            }
+                        }
+                        echo json_encode(['success' => true, 'juntas' => $juntas]);
                     }else{
                         echo json_encode(['success' => true, 'juntas' => []]);
                     }
@@ -196,9 +222,9 @@
 
     //Consultar Juntas
     if($_SERVER['REQUEST_METHOD'] === 'GET') {
-        $date = date('Y-m-d');
+        $date = date('Y-m-d H:i:s');
         if($userData['permisos'] == 1) {
-            $query = "SELECT Junta.id_junta as id, Junta.fecha, Junta.hora_inicio, Junta.hora_fin, Usuario.nombre, Usuario.apellido_paterno, Usuario.apellido_materno, Junta.asunto, Junta.sala, Junta.descripcion FROM Junta INNER JOIN Empleado ON Junta.id_anfitrion = Empleado.id_empleado INNER JOIN Usuario ON Empleado.id_usuario = Usuario.id_usuario WHERE Junta.fecha >= ? ORDER BY Junta.fecha";
+            $query = "SELECT Junta.id_junta as id, Junta.fecha, Junta.hora_inicio, Junta.hora_fin, Usuario.nombre, Usuario.apellido_paterno, Usuario.apellido_materno, Junta.asunto, Junta.sala, Junta.descripcion FROM Junta INNER JOIN Empleado ON Junta.id_anfitrion = Empleado.id_empleado INNER JOIN Usuario ON Empleado.id_usuario = Usuario.id_usuario WHERE CONCAT(Junta.fecha, ' ', Junta.hora_inicio) >= ? ORDER BY Junta.fecha";
             $stmt = $dbConn->prepare($query);
             $stmt->bindParam(1, $date);
             $stmt->execute();
@@ -208,10 +234,8 @@
                 foreach($juntas as &$junta) {
                     $query = "SELECT CONCAT(Usuario.nombre, ' ', Usuario.apellido_paterno, ' ', Usuario.apellido_materno) as nombre, Usuario.correo FROM InvitadosPorJunta INNER JOIN Invitado ON InvitadosPorJunta.id_invitado = Invitado.id_invitado INNER JOIN Usuario ON Invitado.id_usuario = Usuario.id_usuario WHERE InvitadosPorJunta.id_junta = ?";
                     $stmt = $dbConn->prepare($query);
-                    $stmt->bindParam(1, $junta['id_junta']);
+                    $stmt->bindParam(1, $junta['id']);
                     $stmt->execute();
-
-                    unset($junta['id_junta']);
 
                     if($stmt->rowCount() > 0) {
                         $invitados = $stmt->fetchAll();
@@ -224,8 +248,9 @@
                 echo json_encode(['success' => true, 'juntas' => $juntas]);
 
             }
-        }else{
-            $query = "SELECT Junta.id_junta as id, Junta.fecha, Junta.hora_inicio, Junta.hora_fin, Usuario.nombre, Usuario.apellido_paterno, Usuario.apellido_materno, Junta.asunto, Junta.sala, Junta.descripcion FROM Junta INNER JOIN Empleado ON Junta.id_anfitrion = Empleado.id_empleado INNER JOIN Usuario ON Empleado.id_usuario = Usuario.id_usuario WHERE Junta.fecha >= ? AND Usuario.id_usuario = ? ORDER BY Junta.fecha";
+            $stmt = null;
+        }else if($userData['permisos'] == 4){
+            $query = "SELECT Junta.id_junta as id, Junta.fecha, Junta.hora_inicio, Junta.hora_fin, Usuario.nombre, Usuario.apellido_paterno, Usuario.apellido_materno, Junta.asunto, Junta.sala, Junta.descripcion FROM Junta INNER JOIN Empleado ON Junta.id_anfitrion = Empleado.id_empleado INNER JOIN Usuario ON Empleado.id_usuario = Usuario.id_usuario WHERE CONCAT(Junta.fecha, ' ', Junta.hora_inicio) >= ? AND Usuario.id_usuario = ?  ORDER BY Junta.fecha";
             $stmt = $dbConn->prepare($query);
             $stmt->bindParam(1, $date);
             $stmt->bindParam(2, $userData['id_usuario']);
@@ -248,8 +273,25 @@
                 }
 
                 echo json_encode(['success' => true, 'juntas' => $juntas]);
-
+                $stmt = null;
+            }else{
+                echo json_encode(['success' => true, 'juntas' => []]);
             }
+        }else if($userData['permisos'] == 2){
+            $query = "SELECT Junta.id_junta as id, Junta.asunto, CONCAT(a.nombre, ' ', a.apellido_paterno, ' ', a.apellido_materno) as anfitrion, Junta.fecha, Junta.hora_inicio, Junta.hora_fin, Junta.sala, InvitadosPorJunta.estado FROM InvitadosPorJunta INNER JOIN Junta ON InvitadosPorJunta.id_junta = Junta.id_junta INNER JOIN Empleado ON Empleado.id_empleado = Junta.id_anfitrion INNER JOIN Usuario as a ON Empleado.id_usuario = a.id_usuario INNER JOIN Invitado ON InvitadosPorJunta.id_invitado = Invitado.id_invitado INNER JOIN Usuario as b ON Invitado.id_usuario = b.id_usuario WHERE b.id_usuario = ? AND CONCAT(Junta.fecha, ' ', Junta.hora_inicio) >= ? ORDER BY Junta.fecha, Junta.hora_inicio";
+            $stmt = $dbConn->prepare($query);
+            $stmt->bindParam(1, $userData['id_usuario']);
+            $stmt->bindParam(2, $date);
+            $stmt->execute();
+
+            if($stmt->rowCount() > 0) {
+                $juntas = $stmt->fetchAll();
+                echo json_encode(['success' => true, 'juntas' => $juntas]);
+
+            }else{
+                echo json_encode(['success' => true, 'juntas' => []]);
+            }
+            $stmt = null;
         }
     }
 

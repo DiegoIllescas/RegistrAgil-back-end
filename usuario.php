@@ -63,17 +63,31 @@
         $data = json_decode($json, true);
 
         if(isset($data['clave'])) {
-            //Cambiar contraseña
-            $query = "UPDATE Usuario SET clave = :clave WHERE id_usuario = :id_usuario";
+            //Validar si la contraseña no es la que ya esta en la base:
+            $query = "SELECT clave FROM Usuario WHERE id_usuario = ?";
             $stmt = $dbConn->prepare($query);
-            $stmt->bindValue(':clave', password_hash($data['clave'], PASSWORD_DEFAULT));
-            $stmt->bindValue(':id_usuario', $userData['id_usuario']);
-            if($stmt->execute()) {
-                echo json_encode(['success' => true]);
+            $stmt->bindParam(1, $userData['id_usuario']);
+            $stmt->execute();
+            
+            $res = $stmt->fetch();
+            if(!password_verify($data['clave'], $res['clave'])) {
+                //Cambiar contraseña
+                $query = "UPDATE Usuario SET clave = :clave WHERE id_usuario = :id_usuario";
+                $stmt = $dbConn->prepare($query);
+                $stmt->bindValue(':clave', password_hash($data['clave'], PASSWORD_DEFAULT));
+                $stmt->bindValue(':id_usuario', $userData['id_usuario']);
+                if($stmt->execute()) {
+                    echo json_encode(['success' => true]);
+                }else{
+                    header("HTTP/1.1 400");
+                    echo json_encode(['success' => false, 'error' => 'No se pudo actualizar tu contraseña']);
+                }
             }else{
-                header("HTTP/1.1 426");
-                echo json_encode(['success' => false, 'error' => 'No se pudo actualizar tu contraseña']);
+                header("HTTP/1.1 400");
+                echo json_encode(['success' => false, 'error' => 'La contraseña nueva no puede ser igual a la contraseña actual.']);
             }
+            
+            
         }
         if(isset($data['fotografia'])){
             //Cambiar la foto

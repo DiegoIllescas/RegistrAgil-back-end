@@ -95,15 +95,15 @@ INSERT INTO Empleado (id_usuario, direccion, departamento) VALUE (2, 'Av. Juan d
 
 INSERT INTO Empleado (id_usuario, direccion, departamento) VALUE (3, 'Av. Juan de Dios Bátiz s/n esq. Av. Miguel Othón de Mendizabal. Colonia Lindavista. Alcaldia: Gustavo A. Madero. C. P. 07738. Ciudad de México.', 'Desarrollo Back-end');
 
-INSERT INTO Empleado (id_usuario, direccion, departamento) VALUE (4, 'Av. Juan de Dios Bátiz s/n esq. Av. Miguel Othón de Mendizabal. Colonia Lindavista. Alcaldia: Gustavo A. Madero. C. P. 07738. Ciudad de México.', 'Recepcion');
+INSERT INTO Empleado (id_usuario, direccion, departamento) VALUE (4, 'Av. Juan de Dios Bátiz s/n esq. Av. Miguel Othón de Mendizabal. Colonia Lindavista. Alcaldia: Gustavo A. Madero. C. P. 07738. Ciudad de México.', 'Recepción');
 
 INSERT INTO Invitado (id_usuario, tipo_identificacion) VALUE (5, 'Pasaporte');
 
-INSERT INTO Junta (id_anfitrion, asunto, sala, fecha, hora_inicio, hora_fin, descripcion, direccion) VALUE (1, "Revision de Avances de Proyecto", "1113", "2024-06-03", "8:30", "10:00", "Presentacion de Avances de Proyecto hechos durante el sprint pasado", "Av. Juan de Dios Bátiz s/n esq. Av. Miguel Othón de Mendizabal. Colonia Lindavista. Alcaldia: Gustavo A. Madero. C. P. 07738. Ciudad de México.");
+INSERT INTO Junta (id_anfitrion, asunto, sala, fecha, hora_inicio, hora_fin, descripcion, direccion) VALUE (1, "Revisión de Avances de Proyecto", "1113", "2024-06-03", "8:30", "10:00", "Presentación de Avances de Proyecto hechos durante el sprint pasado", "Av. Juan de Dios Bátiz s/n esq. Av. Miguel Othón de Mendizabal. Colonia Lindavista. Alcaldia: Gustavo A. Madero. C. P. 07738. Ciudad de México.");
 
-INSERT INTO Junta (id_anfitrion, asunto, sala, fecha, hora_inicio, hora_fin, descripcion, direccion) VALUE (1, "Presentacion del Proyecto", "1113", "2024-06-10", "8:30", "10:30", "Presentacion del Proyecto integrado y funcional al cliente", "Av. Juan de Dios Bátiz s/n esq. Av. Miguel Othón de Mendizabal. Colonia Lindavista. Alcaldia: Gustavo A. Madero. C. P. 07738. Ciudad de México.");
+INSERT INTO Junta (id_anfitrion, asunto, sala, fecha, hora_inicio, hora_fin, descripcion, direccion) VALUE (1, "Presentación del Proyecto", "1113", "2024-06-10", "8:30", "10:30", "Presentación del Proyecto integrado y funcional al cliente", "Av. Juan de Dios Bátiz s/n esq. Av. Miguel Othón de Mendizabal. Colonia Lindavista. Alcaldia: Gustavo A. Madero. C. P. 07738. Ciudad de México.");
 
-INSERT INTO Junta (id_anfitrion, asunto, sala, fecha, hora_inicio, hora_fin, descripcion, direccion) VALUE (2, "Negociacion de Acuerdo Comercial", "1114", "2024-06-10", "10:30", "12:00", "Negociacion de Acuerdo Comercial para la Distribucion del Proyecto", "Av. Juan de Dios Bátiz s/n esq. Av. Miguel Othón de Mendizabal. Colonia Lindavista. Alcaldia: Gustavo A. Madero. C. P. 07738. Ciudad de México.");
+INSERT INTO Junta (id_anfitrion, asunto, sala, fecha, hora_inicio, hora_fin, descripcion, direccion) VALUE (2, "Negociación de Acuerdo Comercial", "1114", "2024-06-10", "10:30", "12:00", "Negociación de Acuerdo Comercial para la Distribucion del Proyecto", "Av. Juan de Dios Bátiz s/n esq. Av. Miguel Othón de Mendizabal. Colonia Lindavista. Alcaldia: Gustavo A. Madero. C. P. 07738. Ciudad de México.");
 
 INSERT INTO Junta (id_anfitrion, asunto, sala, fecha, hora_inicio, hora_fin, descripcion, direccion) VALUE (1, "Establecimiento de Requerimientos de nuevo Proyecto", "1113", "2024-06-15", "8:30", "10:00", "Junta para discutir las necesidades a cumplir por el sistema solicitado", "Av. Juan de Dios Bátiz s/n esq. Av. Miguel Othón de Mendizabal. Colonia Lindavista. Alcaldia: Gustavo A. Madero. C. P. 07738. Ciudad de México.");
 
