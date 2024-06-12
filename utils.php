@@ -213,7 +213,8 @@
         }
         .btn-registro {
             background-color: #88C7FF;
-            color: #fff;
+            color: #ffffff;
+            font-weight: bold;
             padding: 10px 20px;
             border: none;
             border-radius: 5px;

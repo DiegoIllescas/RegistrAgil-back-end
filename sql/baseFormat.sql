@@ -56,7 +56,7 @@ CREATE TABLE Junta (
     descripcion text not null,
     direccion text not null,
     foreign key (id_anfitrion) references Empleado(id_empleado) ON DELETE CASCADE,
-    UNIQUE (sala, fecha, hora_inicio, hora_fin)
+    UNIQUE (sala, fecha, hora_inicio, id_anfitrion)
 );
 
 CREATE TABLE InvitadosPorJunta (
