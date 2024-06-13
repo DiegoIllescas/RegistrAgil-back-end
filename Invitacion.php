@@ -121,6 +121,49 @@
                 $stmt->bindValue(':qr', $userData['idjunta']);
                 $stmt->execute();
             }
+
+            $query = "SELECT id_junta FROM InvitadosPorJunta WHERE id_qr = ?";
+            $stmt = $dbConn->prepare($query);
+            $stmt->bindParam(1, $userData['idjunta']);
+            $stmt->execute();
+
+            $idjunta = $stmt->fetch()['id_junta'];
+
+            if(isset($data['invitados'])) {
+                foreach ($data['invitados'] as &$invitado) {
+                    //Comprobar que no esten ya registrados
+                    $query = "SELECT Invitado.id_invitado FROM Invitado INNER JOIN Usuario ON Invitado.id_usuario = Usuario.id_usuario WHERE Usuario.correo = ? AND Usuario.permisos = 2";
+                    $stmt = $dbConn->prepare($query);
+                    $stmt->bindParam(1, $invitado['correo']);
+                    $stmt->execute();
+
+                    if($stmt->rowCount() > 0) {
+                        $idInvitado =  $stmt->fetch()['id_invitado'];
+                        $query = "INSERT INTO InvitadosPorJunta (id_junta, id_invitado, estado, invitado_por) VALUE (:id_junta, :id_invitado, 'Pendiente', :invitado_por)";
+                        $stmt = $dbConn->prepare($query);
+                        $stmt->bindValue(':id_junta', $idjunta);
+                        $stmt->bindValue(':id_invitado', $idInvitado);
+                        $stmt->bindValue(':invitado_por', $id);
+                        $stmt->execute();
+                    }else{
+                        $query = "INSERT INTO Usuario (correo, permisos) VALUE (?, 2)";
+                        $stmt = $dbConn->prepare($query);
+                        $stmt->bindValue(1, $invitado['correo']);
+                        $stmt->execute();
+
+                        $idInvitado = $dbConn->lastInsertId();
+
+                        $query = "INSERT INTO InvitadosPorJunta (id_junta, id_invitado, estado, invitado_por) VALUE (:id_junta, :id_invitado, 'Pendiente', :invitado_por)";
+                        $stmt = $dbConn->prepare($query);
+                        $stmt->bindValue(':id_junta', $idjunta);
+                        $stmt->bindValue(':id_invitado', $idInvitado);
+                        $stmt->bindValue(':invitado_por', $id);
+                        $stmt->execute();
+                    }
+
+                    $query = "SELECT ";
+                }
+            }
         }else{
             echo json_encode(['success' => false, 'error' => 'Faltan parametros']);
         }
