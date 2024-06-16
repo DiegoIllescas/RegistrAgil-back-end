@@ -81,7 +81,7 @@
                 $stmt->bindValue(':fecha', $date);
                 $stmt->bindValue(':id_usuario', $userData['id_usuario']);
                 if($stmt->execute()) {
-                    echo json_encode(['success' => true, 'diff' => $diff, 'estatis' => $res['lastUpdatePass']]);
+                    echo json_encode(['success' => true]);
                 }else{
                     echo json_encode(['success' => false, 'error' => 'No se pudo actualizar tu contraseña']);
                 }
@@ -91,9 +91,7 @@
             
             
         }
-        if(isset($data['fotografia'])){
-            //Cambiar la foto
-        }
+
     }
     $dbConn = null;
 ?>
