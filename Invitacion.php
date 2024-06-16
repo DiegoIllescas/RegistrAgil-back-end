@@ -145,6 +145,8 @@
                         $stmt->bindValue(':id_invitado', $idInvitado);
                         $stmt->bindValue(':invitado_por', $id);
                         $stmt->execute();
+
+                        $idQR = $dbConn->lastInsertId();
                     }else{
                         $query = "INSERT INTO Usuario (correo, permisos) VALUE (?, 2)";
                         $stmt = $dbConn->prepare($query);
@@ -159,11 +161,24 @@
                         $stmt->bindValue(':id_invitado', $idInvitado);
                         $stmt->bindValue(':invitado_por', $id);
                         $stmt->execute();
+
+                        $idQR = $dbConn->lastInsertId();
                     }
 
-                    $query = "SELECT ";
+                    $query = "SELECT CONCAT(a.nombre, ' ', a.apellido_paterno, ' ', a.apellido_materno) as anfitrion, Junta.asunto, Junta.sala, Junta.fecha, Junta.hora_inicio, Junta.hora_fin, Junta.descripcion, Junta.direccion, a.empresa, a.correo as anfitrionCorreo, a.telefono FROM Junta INNER JOIN Empleado ON Junta.id_anfitrion = Empleado.id_empleado INNER JOIN Usuario as a ON Empleado.id_usuario = a.id_usuario WHERE Junta.id_junta = ?";
+                    $stmt = $dbConn->prepare($query);
+                    $stmt->bindParam(1, $idjunta);
+                    $stmt->execute();
+
+                    $content = $stmt->fetch();
+
+                    sendInvitation($idQR, $invitado['correo'], 0, $content, $keypass);
                 }
             }
+
+            //Generar QR
+            genQR($userData['idjunta']);
+            
         }else{
             echo json_encode(['success' => false, 'error' => 'Faltan parametros']);
         }

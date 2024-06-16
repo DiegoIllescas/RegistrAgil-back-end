@@ -6,6 +6,8 @@
     use PHPMailer\PHPMailer\SMTP;
     use PHPMailer\PHPMailer\Exception;
 
+    use chillerlan\QRCode\{QRCode};
+
     require 'vendor/autoload.php';
 
     $payload;
@@ -307,35 +309,7 @@
         }
     }
 
-    function sendPrueba() {
-        $mail = new PHPMailer(true);
-        try {
-            $mail->isSMTP();
-            $mail->Host         = 'smtp.gmail.com';
-            $mail->SMTPAuth     = true;
-            $mail->Username     = 'softwarelegends65@gmail.com';
-            $mail->Password     = 'prhj hhpo rnvs xrqj';
-            $mail->SMTPSecure   = PHPMailer::ENCRYPTION_SMTPS;
-            $mail->Port         = 465;
-
-            $mail->addAddress("dillescas365@gmail.com");
-
-            
-
-            $mail->isHTML(true);
-            $mail->Subject      = "Prueba HTML";
-            $mail->Body         = "
-                <div>
-                    <div style='background-color: #121212'>
-                        Prueba de mandar html con estilos css
-                    </div>
-                </div>
-            ";
-
-            $mail->send();
-            return true;
-        }catch(Exception $e) {
-            return false;
-        }
+    function genQR($idqr) {
+        $qrcode = (new QRCode)->render($idqr, './qr/'.$idqr.'.svg');  
     }
 ?>
