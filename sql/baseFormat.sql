@@ -19,7 +19,7 @@ CREATE TABLE Usuario (
 
 CREATE TABLE Empleado (
     id_empleado int unsigned not null primary key auto_increment,
-    id_usuario int unsigned not null,
+    id_usuario int unsigned unique not null,
     departamento nvarchar(45) not null,
     direccion nvarchar(200) not null,
     foreign key (id_usuario) references Usuario(id_usuario) ON DELETE CASCADE
@@ -32,9 +32,9 @@ CREATE TABLE Invitado (
     foreign key (id_usuario) references Usuario(id_usuario) ON DELETE CASCADE
 );
 
-CREATE TABLE Dispositivos (
+CREATE TABLE Dispositivo (
     id_dispositivo int unsigned not null primary key auto_increment,
-    no_serie int(11) unsigned unique not null,
+    no_serie int unsigned unique not null,
     modelo nvarchar(45) not null
 );
 
@@ -71,14 +71,16 @@ CREATE TABLE InvitadosPorJunta (
     foreign key (id_junta) references Junta(id_junta) ON DELETE CASCADE,
     foreign key (id_invitado) references Invitado(id_invitado),
     foreign key (id_automovil) references Automovil(id_automovil),
-    foreign key (invitado_por) references Invitado(id_invitado)
+    foreign key (invitado_por) references Invitado(id_invitado),
+    UNIQUE (id_junta, id_invitado)
 );
 
 CREATE TABLE DispositivosPorReunion (
     id_qr int unsigned not null,
     id_dispositivo int unsigned not null,
     foreign key (id_qr) references InvitadosPorJunta(id_qr),
-    foreign key (id_dispositivo) references Dispositivos(id_dispositivo)
+    foreign key (id_dispositivo) references Dispositivo(id_dispositivo),
+    UNIQUE (id_dispositivo, id_qr)
 );
 
 INSERT INTO Usuario (correo, nombre, apellido_paterno, apellido_materno, empresa, fotografia, telefono, permisos, clave) VALUE ('admin@test.com','Juan','Gonzales','Lopez','Software Legends','./img/1.jpg','5511223344',1,'$2y$10$fyqdXZvd9dPbB8aTwX5hF.4ksPrVBaoiF2HmulUUVg5L6XFG11TXW');

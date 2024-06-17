@@ -146,7 +146,7 @@
 
                         $flag = $flag && sendInvitation($idQR, $invitado['correo'], $invitado['acompañantes'], $content, $keypass);
                     }
-                    echo json_encode(['success' => true, 'id_reunion' => $idQR, 'flag' => $flag]);
+                    echo json_encode(['success' => true]);
                 }else{
                     echo json_encode(['success' => false, 'error' => 'No se pudo agendar la junta']);
                 }
@@ -162,7 +162,7 @@
                     if($stmt->rowCount() > 0){
                         $juntas = $stmt->fetchAll();
                         foreach($juntas as &$junta) {
-                            $query = "SELECT CONCAT(Usuario.nombre, ' ', Usuario.apellido_paterno, ' ', Usuario.apellido_materno) as nombre, Usuario.correo FROM InvitadosPorJunta INNER JOIN Invitado ON InvitadosPorJunta.id_invitado = Invitado.id_invitado INNER JOIN Usuario ON Invitado.id_usuario = Usuario.id_usuario WHERE InvitadosPorJunta.id_junta = ?";
+                            $query = "SELECT CONCAT(Usuario.nombre, ' ', Usuario.apellido_paterno, ' ', Usuario.apellido_materno) as nombre, Usuario.correo, InvitadosPorJunta.estado FROM InvitadosPorJunta INNER JOIN Invitado ON InvitadosPorJunta.id_invitado = Invitado.id_invitado INNER JOIN Usuario ON Invitado.id_usuario = Usuario.id_usuario WHERE InvitadosPorJunta.id_junta = ?";
                             $stmt = $dbConn->prepare($query);
                             $stmt->bindParam(1, $junta['id']);
                             $stmt->execute();
@@ -173,6 +173,8 @@
                             }else{
                                 $junta['invitados'] = [];
                             }
+                            $junta['hora_inicio'] = date('H:i', strtotime($junta['hora_inicio']));
+                            $junta['hora_fin'] = date('H:i', strtotime($junta['hora_fin']));
                         }
                         echo json_encode(['success' => true, 'juntas' => $juntas]);
                     }else{
@@ -189,7 +191,7 @@
                     if($stmt->rowCount() > 0){
                         $juntas = $stmt->fetchAll();
                         foreach($juntas as &$junta) {
-                            $query = "SELECT CONCAT(Usuario.nombre, ' ', Usuario.apellido_paterno, ' ', Usuario.apellido_materno) as nombre, Usuario.correo FROM InvitadosPorJunta INNER JOIN Invitado ON InvitadosPorJunta.id_invitado = Invitado.id_invitado INNER JOIN Usuario ON Invitado.id_usuario = Usuario.id_usuario WHERE InvitadosPorJunta.id_junta = ?";
+                            $query = "SELECT CONCAT(Usuario.nombre, ' ', Usuario.apellido_paterno, ' ', Usuario.apellido_materno) as nombre, Usuario.correo, InvitadosPorJunta.estado FROM InvitadosPorJunta INNER JOIN Invitado ON InvitadosPorJunta.id_invitado = Invitado.id_invitado INNER JOIN Usuario ON Invitado.id_usuario = Usuario.id_usuario WHERE InvitadosPorJunta.id_junta = ?";
                             $stmt = $dbConn->prepare($query);
                             $stmt->bindParam(1, $junta['id']);
                             $stmt->execute();
@@ -226,7 +228,7 @@
             if($stmt->rowCount() > 0) {
                 $juntas = $stmt->fetchAll();
                 foreach($juntas as &$junta) {
-                    $query = "SELECT CONCAT(Usuario.nombre, ' ', Usuario.apellido_paterno, ' ', Usuario.apellido_materno) as nombre, Usuario.correo FROM InvitadosPorJunta INNER JOIN Invitado ON InvitadosPorJunta.id_invitado = Invitado.id_invitado INNER JOIN Usuario ON Invitado.id_usuario = Usuario.id_usuario WHERE InvitadosPorJunta.id_junta = ?";
+                    $query = "SELECT CONCAT(Usuario.nombre, ' ', Usuario.apellido_paterno, ' ', Usuario.apellido_materno) as nombre, Usuario.correo, InvitadosPorJunta.estado FROM InvitadosPorJunta INNER JOIN Invitado ON InvitadosPorJunta.id_invitado = Invitado.id_invitado INNER JOIN Usuario ON Invitado.id_usuario = Usuario.id_usuario WHERE InvitadosPorJunta.id_junta = ?";
                     $stmt = $dbConn->prepare($query);
                     $stmt->bindParam(1, $junta['id']);
                     $stmt->execute();
@@ -253,7 +255,7 @@
             if($stmt->rowCount() > 0) {
                 $juntas = $stmt->fetchAll();
                 foreach($juntas as &$junta) {
-                    $query = "SELECT CONCAT(Usuario.nombre, ' ', Usuario.apellido_paterno, ' ', Usuario.apellido_materno) as nombre, Usuario.correo FROM InvitadosPorJunta INNER JOIN Invitado ON InvitadosPorJunta.id_invitado = Invitado.id_invitado INNER JOIN Usuario ON Invitado.id_usuario = Usuario.id_usuario WHERE InvitadosPorJunta.id_junta = ?";
+                    $query = "SELECT CONCAT(Usuario.nombre, ' ', Usuario.apellido_paterno, ' ', Usuario.apellido_materno) as nombre, Usuario.correo, InvitadosPorJunta.estado FROM InvitadosPorJunta INNER JOIN Invitado ON InvitadosPorJunta.id_invitado = Invitado.id_invitado INNER JOIN Usuario ON Invitado.id_usuario = Usuario.id_usuario WHERE InvitadosPorJunta.id_junta = ?";
                     $stmt = $dbConn->prepare($query);
                     $stmt->bindParam(1, $junta['id']);
                     $stmt->execute();
