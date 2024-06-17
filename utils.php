@@ -143,6 +143,7 @@
             $mail->Password     = 'prhj hhpo rnvs xrqj';
             $mail->SMTPSecure   = PHPMailer::ENCRYPTION_SMTPS;
             $mail->Port         = 465;
+            $mail->CharSet      ='UTF-8';
 
             $mail->addAddress($correo);
 

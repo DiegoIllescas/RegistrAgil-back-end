@@ -202,6 +202,8 @@
                             }else{
                                 $junta['invitados'] = [];
                             }
+                            $junta['hora_inicio'] = date('H:i', strtotime($junta['hora_inicio']));
+                            $junta['hora_fin'] = date('H:i', strtotime($junta['hora_fin']));
                         }
                         echo json_encode(['success' => true, 'juntas' => $juntas]);
                     }else{
@@ -239,6 +241,8 @@
                     }else{
                         $junta['invitados'] = [];
                     }
+                    $junta['hora_inicio'] = date('H:i', strtotime($junta['hora_inicio']));
+                    $junta['hora_fin'] = date('H:i', strtotime($junta['hora_fin']));
                 }
 
                 echo json_encode(['success' => true, 'juntas' => $juntas]);
@@ -266,6 +270,8 @@
                     }else{
                         $junta['invitados'] = [];
                     }
+                    $junta['hora_inicio'] = date('H:i', strtotime($junta['hora_inicio']));
+                    $junta['hora_fin'] = date('H:i', strtotime($junta['hora_fin']));
                 }
 
                 echo json_encode(['success' => true, 'juntas' => $juntas]);
@@ -282,6 +288,10 @@
 
             if($stmt->rowCount() > 0) {
                 $juntas = $stmt->fetchAll();
+                foreach($juntas as &$junta) {
+                    $junta['hora_inicio'] = date('H:i', strtotime($junta['hora_inicio']));
+                    $junta['hora_fin'] = date('H:i', strtotime($junta['hora_fin']));
+                }
                 echo json_encode(['success' => true, 'juntas' => $juntas]);
 
             }else{
